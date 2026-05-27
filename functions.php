@@ -65,23 +65,23 @@ function nursoft_scripts() {
     wp_enqueue_style( 'nursoft-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap', array(), null );
 
     // Theme main stylesheet
-    wp_enqueue_style( 'nursoft-style', get_stylesheet_uri(), array( 'nursoft-fonts' ), '1.7.0' );
+    wp_enqueue_style( 'nursoft-style', get_stylesheet_uri(), array( 'nursoft-fonts' ), '1.8.0' );
 
     // Enqueue Live Search JS
-    wp_enqueue_script( 'nursoft-live-search', get_template_directory_uri() . '/assets/js/live-search.js', array(), '1.7.0', true );
+    wp_enqueue_script( 'nursoft-live-search', get_template_directory_uri() . '/assets/js/live-search.js', array(), '1.8.0', true );
     wp_localize_script( 'nursoft-live-search', 'nursoftLiveSearch', array(
         'ajaxurl' => admin_url( 'admin-ajax.php' ),
         'nonce'   => wp_create_nonce( 'nursoft-search-nonce' )
     ) );
 
     // Enqueue Download Handler JS
-    wp_enqueue_script( 'nursoft-download-handler', get_template_directory_uri() . '/assets/js/download-handler.js', array(), '1.7.0', true );
+    wp_enqueue_script( 'nursoft-download-handler', get_template_directory_uri() . '/assets/js/download-handler.js', array(), '1.8.0', true );
     wp_localize_script( 'nursoft-download-handler', 'nursoftDownload', array(
         'ajaxurl' => admin_url( 'admin-ajax.php' )
     ) );
 
     // Enqueue Quick View JS
-    wp_enqueue_script( 'nursoft-quick-view', get_template_directory_uri() . '/assets/js/quick-view.js', array(), '1.7.0', true );
+    wp_enqueue_script( 'nursoft-quick-view', get_template_directory_uri() . '/assets/js/quick-view.js', array(), '1.8.0', true );
     wp_localize_script( 'nursoft-quick-view', 'nursoftQuickView', array(
         'ajaxurl' => admin_url( 'admin-ajax.php' ),
         'nonce'   => wp_create_nonce( 'nursoft-quickview-nonce' )
@@ -2282,7 +2282,7 @@ add_filter( 'the_content', 'nursoft_inject_content_ads' );
  */
 function nursoft_dynamic_seo_engine() {
     // 1. Robots, Canonical & Core Meta tags
-    echo "\n<!-- Nursoft Premium SEO Engine (v1.7.0) -->\n";
+    echo "\n<!-- Nursoft Premium SEO Engine (v1.8.0) -->\n";
     
     $canonical_url = esc_url( home_url( $_SERVER['REQUEST_URI'] ) );
     echo '<link rel="canonical" href="' . $canonical_url . '" />' . "\n";
@@ -2531,6 +2531,102 @@ function nursoft_auto_tagging_system( $post_id, $post, $update ) {
     add_action( 'save_post', 'nursoft_auto_tagging_system', 10, 3 );
 }
 add_action( 'save_post', 'nursoft_auto_tagging_system', 10, 3 );
+
+
+/**
+ * AJAX endpoints for premium Bookmarks/Favorites sync
+ */
+add_action( 'wp_ajax_nursoft_sync_favorites', 'nursoft_sync_favorites_ajax' );
+add_action( 'wp_ajax_nopriv_nursoft_sync_favorites', 'nursoft_sync_favorites_ajax' );
+
+function nursoft_sync_favorites_ajax() {
+    // Return early if nonce is invalid
+    if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'nursoft-fav-nonce' ) ) {
+        wp_send_json_error( array( 'message' => 'Invalid security token' ) );
+    }
+    if ( ! is_user_logged_in() ) {
+        wp_send_json_error( array( 'message' => 'User not logged in' ) );
+    }
+    
+    $user_id   = get_current_user_id();
+    $favorites = isset( $_POST['favorites'] ) ? array_map( 'intval', $_POST['favorites'] ) : array();
+    
+    update_user_meta( $user_id, '_nursoft_favorites', $favorites );
+    wp_send_json_success( array( 'message' => 'Favorites synced successfully' ) );
+}
+
+add_action( 'wp_ajax_nursoft_get_favorites_details', 'nursoft_get_favorites_details_ajax' );
+add_action( 'wp_ajax_nopriv_nursoft_get_favorites_details', 'nursoft_get_favorites_details_ajax' );
+
+function nursoft_get_favorites_details_ajax() {
+    if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'nursoft-fav-nonce' ) ) {
+        wp_send_json_error( array( 'message' => 'Invalid security token' ) );
+    }
+    
+    $post_ids = isset( $_POST['post_ids'] ) ? array_map( 'intval', $_POST['post_ids'] ) : array();
+    
+    if ( is_user_logged_in() ) {
+        $db_favs = get_user_meta( get_current_user_id(), '_nursoft_favorites', true );
+        if ( is_array( $db_favs ) && ! empty( $db_favs ) ) {
+            $post_ids = array_unique( array_merge( $post_ids, $db_favs ) );
+        }
+    }
+    
+    if ( empty( $post_ids ) ) {
+        wp_send_json_success( array( 'html' => '<p class="no-bookmarks" style="text-align:center;color:var(--text-muted);padding:20px;font-weight:600;">' . esc_html__('No bookmarks saved yet.', 'nursoft') . '</p>' ) );
+    }
+    
+    $args = array(
+        'post_type'      => array( 'software', 'book', 'course' ),
+        'post__in'       => $post_ids,
+        'posts_per_page' => -1,
+    );
+    
+    $query = new WP_Query( $args );
+    $html = '';
+    
+    if ( $query->have_posts() ) {
+        while ( $query->have_posts() ) {
+            $query->the_post();
+            $post_id    = get_the_ID();
+            $post_type  = get_post_type();
+            
+            // Determine version tag
+            $latest_version = '';
+            if ( $post_type === 'software' ) {
+                $versions = get_post_meta( $post_id, '_nursoft_versions_list', true );
+                if ( is_array( $versions ) && ! empty( $versions ) ) {
+                    $latest_version = $versions[0]['version'];
+                } else {
+                    $latest_version = get_post_meta( $post_id, '_nursoft_version', true );
+                }
+            } elseif ( $post_type === 'book' ) {
+                $latest_version = get_post_meta( $post_id, '_nursoft_book_format', true );
+            } elseif ( $post_type === 'course' ) {
+                $latest_version = get_post_meta( $post_id, '_nursoft_course_duration', true );
+            }
+            
+            $thumb = has_post_thumbnail() ? get_the_post_thumbnail_url( $post_id, 'thumbnail' ) : get_template_directory_uri() . '/assets/img/default-logo.png';
+            
+            $html .= '<div class="fav-item-card" data-post-id="' . esc_attr( $post_id ) . '" data-latest-version="' . esc_attr( $latest_version ) . '" style="display:flex;align-items:center;gap:15px;padding:12px;background:var(--bg-element);border:1px solid var(--border-color);border-radius:10px;margin-bottom:10px;position:relative; transition: transform var(--transition-fast);">';
+            $html .= '  <img src="' . esc_url( $thumb ) . '" style="width:40px;height:40px;object-fit:cover;border-radius:8px;background:var(--bg-surface);border:1px solid var(--border-color);" />';
+            $html .= '  <div style="flex-grow:1;min-width:0;">';
+            $html .= '    <a href="' . esc_url( get_permalink() ) . '" style="font-weight:700;font-size:13.5px;color:var(--text-primary);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' . esc_html( get_the_title() ) . '</a>';
+            $html .= '    <span style="font-size:11px;color:var(--accent-blue);font-weight:700;text-transform:uppercase;">' . esc_html( $post_type ) . '</span>';
+            $html .= '  </div>';
+            $html .= '  <div class="fav-action-wrap" style="display:flex;align-items:center;gap:10px;">';
+            $html .= '    <span class="update-badge-container" style="display:none;"></span>';
+            $html .= '    <button class="remove-fav-btn" data-post-id="' . esc_attr( $post_id ) . '" style="background:none;border:none;color:var(--accent-magenta);cursor:pointer;padding:5px;display:flex;align-items:center;justify-content:center;" title="' . esc_attr__('Remove Bookmark', 'nursoft') . '"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>';
+            $html .= '  </div>';
+            $html .= '</div>';
+        }
+        wp_reset_postdata();
+    } else {
+        $html = '<p class="no-bookmarks" style="text-align:center;color:var(--text-muted);padding:20px;font-weight:600;">' . esc_html__('No bookmarks saved yet.', 'nursoft') . '</p>';
+    }
+    
+    wp_send_json_success( array( 'html' => $html ) );
+}
 
 
 
