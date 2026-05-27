@@ -134,6 +134,49 @@ get_header(); ?>
                     </div>
                 </div>
 
+                <!-- Live Social Share & Instant Copy Link Container -->
+                <div class="nursoft-share-bar" style="background:var(--bg-element); border:1px solid var(--border-color); border-radius:14px; padding:12px 18px; margin-top:15px; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;"><?php _e('Share:', 'nursoft'); ?></span>
+                        <a href="https://api.whatsapp.com/send?text=<?php echo rawurlencode(get_the_title() . ' ' . $version_display . ' Free Download: ' . get_permalink()); ?>" target="_blank" style="width:32px; height:32px; border-radius:50%; background:#25d366; display:flex; align-items:center; justify-content:center; color:#fff; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.003 5.324 5.328 0 11.894 0c3.18 0 6.171 1.242 8.423 3.498 2.253 2.256 3.492 5.252 3.492 8.431-.003 6.574-5.329 11.9-11.895 11.9-2.007-.002-3.98-.51-5.733-1.478L0 24zm6.273-3.666l.375.223c1.552.921 3.328 1.408 5.143 1.409 5.565 0 10.096-4.526 10.098-10.096.002-2.697-1.047-5.234-2.954-7.142C17.026 2.82 14.5 1.77 11.89 1.77c-5.565 0-10.093 4.52-10.097 10.093-.001 1.83.479 3.619 1.386 5.17l.244.417-1.012 3.693 3.782-.992zm11.517-8.083c-.302-.15-.1.085-1.439-.773-.131-.065-.226-.098-.322.046-.096.143-.372.47-.456.565-.084.095-.168.107-.47.042-.303-.065-1.279-.471-2.436-1.503-.9-.802-1.508-1.793-1.685-2.094-.177-.302-.019-.465.132-.614.136-.134.303-.353.454-.53.15-.177.202-.302.303-.504.101-.202.05-.378-.025-.53-.075-.15-.631-1.522-.865-2.083-.228-.547-.46-.473-.631-.482-.162-.008-.348-.01-.533-.01-.185 0-.488.07-.743.348-.256.278-.976.953-.976 2.324s1.001 2.7 1.139 2.884c.138.181 1.97 3.007 4.773 4.213.666.287 1.187.458 1.593.587.67.213 1.28.183 1.761.111.536-.08 1.638-.67 1.869-1.319.23-.65.23-1.207.162-1.319-.069-.113-.254-.18-.557-.33z"/></svg>
+                        </a>
+                        <a href="https://t.me/share/url?url=<?php echo rawurlencode(get_permalink()); ?>&text=<?php echo rawurlencode(get_the_title() . ' ' . $version_display . ' Free Download'); ?>" target="_blank" style="width:32px; height:32px; border-radius:50%; background:#0088cc; display:flex; align-items:center; justify-content:center; color:#fff; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-1-.65-.35-1 .22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.24-5.54 3.65-.52.36-.99.53-1.38.52-.43-.01-1.27-.24-1.89-.45-.76-.25-1.37-.39-1.31-.83.03-.22.33-.45.92-.7 3.58-1.56 5.97-2.58 7.16-3.07 3.41-1.42 4.12-1.66 4.58-1.67.1 0 .33.02.48.15.12.1.16.23.17.33 0 .07-.01.15-.02.21z"/></svg>
+                        </a>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <button id="nursoft-copy-link-btn" style="background:var(--bg-surface-hover); border:1px dashed var(--accent-blue); border-radius:8px; padding:6px 12px; color:var(--text-primary); font-size:12px; font-weight:700; display:flex; align-items:center; gap:6px; cursor:pointer; transition:background 0.2s;">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="color:var(--accent-blue);"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                            <span id="copy-btn-text"><?php _e('Copy Direct Link', 'nursoft'); ?></span>
+                        </button>
+                    </div>
+                </div>
+
+                <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const copyBtn = document.getElementById('nursoft-copy-link-btn');
+                    if (copyBtn) {
+                        copyBtn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            const shareUrl = "<?php echo esc_url(get_permalink()); ?>";
+                            navigator.clipboard.writeText(shareUrl).then(() => {
+                                const textSpan = document.getElementById('copy-btn-text');
+                                const originalText = textSpan.textContent;
+                                textSpan.textContent = "✓ Copied!";
+                                copyBtn.style.background = "rgba(43,203,186,0.1)";
+                                copyBtn.style.borderColor = "#2bcbba";
+                                setTimeout(() => {
+                                    textSpan.textContent = originalText;
+                                    copyBtn.style.background = "var(--bg-surface-hover)";
+                                    copyBtn.style.borderColor = "var(--accent-blue)";
+                                }, 2000);
+                            });
+                        });
+                    }
+                });
+                </script>
+
                 <!-- Premium Slideshow Screenshot Gallery Slider & Lightbox -->
                 <?php
                 // Fetch screenshots from both Media IDs and External URLs

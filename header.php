@@ -4,7 +4,7 @@
  *
  * @author  Mohamed Nurdin Mgaza <codeoba@gmail.com>
  * @country Tanzania | +687001775
- * @version 1.9.0
+ * @version 1.9.3
  * @package Nursoft
  */
 ?>
@@ -529,6 +529,42 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     updateCounts();
+
+    // Background Auto-Check for Bookmark Updates
+    function checkBookmarkUpdates() {
+        if (favorites.length === 0) return;
+        const fd = new FormData();
+        fd.append('action', 'nursoft_get_favorites_details');
+        fd.append('nonce', window.nursoft_ajax.nonce);
+        favorites.forEach(id => fd.append('post_ids[]', id));
+
+        fetch(window.nursoft_ajax.url, { method: 'POST', body: fd })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success && data.data && data.data.html) {
+                // Parse returned DOM to compare versions
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(data.data.html, 'text/html');
+                let hasUpdates = false;
+
+                doc.querySelectorAll('.fav-item-card').forEach(card => {
+                    const postId = card.getAttribute('data-post-id');
+                    const latestVer = card.getAttribute('data-latest-version');
+                    const savedVer = localStorage.getItem('nursoft_fav_ver_' + postId);
+                    if (savedVer && latestVer && savedVer !== latestVer) {
+                        hasUpdates = true;
+                    }
+                });
+
+                if (hasUpdates && navBookmarkCount) {
+                    navBookmarkCount.style.background = 'var(--accent-magenta)';
+                    navBookmarkCount.style.boxShadow = '0 0 12px var(--accent-magenta)';
+                    navBookmarkCount.textContent = '●';
+                }
+            }
+        }).catch(err => console.log('Bookmark auto-check failed', err));
+    }
+    setTimeout(checkBookmarkUpdates, 3000);
 
     // Toggle Favorite Action
     document.addEventListener('click', function(e) {
