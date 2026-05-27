@@ -1254,59 +1254,115 @@ html[data-theme="light"] .soft_section_title {
 
 @media (max-width: 768px) {
     .header_nav {
-        display: grid;
-        grid-template-columns: 1fr auto auto auto;
+        display: flex;
+        flex-direction: row;
         align-items: center;
-        gap: 12px 0;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        gap: 6px;
         width: 100%;
+        overflow: hidden;
     }
     
     .header_logo {
-        grid-column: 1;
-        grid-row: 1;
-        justify-content: flex-start;
-        display: flex;
-    }
-    
-    /* Theme switcher in center */
-    .theme_toggle_btn {
-        grid-column: 2;
-        grid-row: 1;
-        margin: 0 6px !important;
+        font-size: 16px !important; /* Shrunk logo text size */
+        margin-right: 0 !important;
+        flex-shrink: 1;
+        min-width: 0;
+        overflow: hidden;
     }
 
-    /* Account icon – second from right */
+    .header_logo svg {
+        height: 20px !important; /* Shrunk logo icon */
+        margin-right: 4px !important;
+    }
+
+    .header_logo span {
+        font-size: 14px !important;
+        font-weight: 800;
+        letter-spacing: -0.2px;
+    }
+    
+    /* Theme switcher in single row */
+    .theme_toggle_btn {
+        margin: 0 !important;
+        padding: 4px !important;
+        flex-shrink: 0;
+    }
+
+    .theme_toggle_btn svg {
+        width: 18px !important;
+        height: 18px !important;
+    }
+
+    /* Account icon wrap */
     .account-btn-wrap {
-        grid-column: 3;
-        grid-row: 1;
-        margin-right: 4px;
+        margin: 0 !important;
+        flex-shrink: 0;
+    }
+
+    .account-btn-wrap .menu_link {
+        padding: 6px 4px !important;
+        gap: 0 !important;
     }
 
     /* Account label text hidden on mobile */
     .account-btn-label {
-        display: none;
+        display: none !important;
     }
 
-    /* Notification bell hidden on mobile (saves space) */
+    /* Notification bell enabled and shrunken to fit in row */
     .notification-bell-wrap {
-        display: none;
+        display: flex !important;
+        margin: 0 !important;
+        flex-shrink: 0;
     }
 
-    /* Categories button far right of top row */
+    .notification-bell-wrap .menu_link {
+        padding: 6px 4px !important;
+    }
+
+    .notification-bell-wrap svg {
+        width: 18px !important;
+        height: 18px !important;
+    }
+
+    /* Categories button far right of top row, shrunken */
     .menu_link#nursoft-categories-btn {
-        grid-column: 4;
-        grid-row: 1;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-        display: flex;
-        justify-content: flex-end;
+        margin: 0 !important;
+        padding: 6px 8px !important;
+        gap: 4px !important;
+        font-size: 12px !important;
+        flex-shrink: 0;
+    }
+
+    .menu_link#nursoft-categories-btn svg {
+        width: 16px !important;
+        height: 16px !important;
+    }
+
+    .menu_link#nursoft-categories-btn span {
+        font-size: 11px !important;
+        font-weight: 700;
     }
     
     .search_wrap {
-        grid-column: 1 / -1;
-        grid-row: 2;
         width: 100%;
         max-width: 100%;
+        margin-top: 4px;
+    }
+    
+    /* Modify .header_wrap layout to contain search on second line properly */
+    .header_wrap .container {
+        padding: 0 10px;
+    }
+
+    .header_nav {
+        flex-wrap: wrap; /* Allows search_wrap to drop nicely to the second line */
+    }
+
+    .search_wrap {
+        flex-basis: 100%;
     }
     
     .footer_grid {
