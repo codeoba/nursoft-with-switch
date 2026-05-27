@@ -2553,7 +2553,8 @@ add_action( 'save_post', 'nursoft_auto_tagging_system', 10, 3 );
  * Helper to convert HEX color to RGBA for transparent glows
  */
 function nursoft_hex2rgba( $color, $opacity = false ) {
-    $default = 'rgb(0, 136, 255)';
+    $default = $opacity !== false ? 'rgba(0, 136, 255, ' . $opacity . ')' : 'rgb(0, 136, 255)';
+    $color = strval( $color );
     if ( empty( $color ) ) {
         return $default;
     }
@@ -2569,7 +2570,8 @@ function nursoft_hex2rgba( $color, $opacity = false ) {
     }
     $rgb = array_map( 'hexdec', $hex );
     if ( $opacity !== false ) {
-        if ( abs( $opacity ) > 1 ) {
+        $opacity = floatval( $opacity );
+        if ( $opacity > 1 ) {
             $opacity = 1.0;
         }
         return 'rgba(' . implode( ',', $rgb ) . ',' . $opacity . ')';
@@ -2582,19 +2584,27 @@ function nursoft_hex2rgba( $color, $opacity = false ) {
  * Adjust hex color brightness dynamically (brightens on hover)
  */
 function nursoft_adjust_brightness( $hex, $steps ) {
-    $steps = max( -255, min( 255, $steps ) );
+    $hex = strval( $hex );
     $hex = str_replace( '#', '', $hex );
+    if ( empty( $hex ) || strlen( $hex ) < 3 ) {
+        return '#1a95ff'; // Fallback default hover color
+    }
+    $steps = max( -255, min( 255, $steps ) );
     if ( strlen( $hex ) == 3 ) {
         $hex = str_repeat( substr( $hex, 0, 1 ), 2 ) . str_repeat( substr( $hex, 1, 1 ), 2 ) . str_repeat( substr( $hex, 2, 1 ), 2 );
     }
     $color_parts = str_split( $hex, 2 );
+    if ( ! is_array( $color_parts ) || empty( $color_parts ) ) {
+        return '#1a95ff';
+    }
     $return = '#';
     foreach ( $color_parts as $color ) {
+        if ( strlen($color) < 2 ) continue;
         $dec = hexdec( $color );
         $dec = max( 0, min( 255, $dec + $steps ) );
         $return .= str_pad( dechex( $dec ), 2, '0', STR_PAD_LEFT );
     }
-    return $return;
+    return ( strlen( $return ) === 7 ) ? $return : '#1a95ff';
 }
 
 /**
