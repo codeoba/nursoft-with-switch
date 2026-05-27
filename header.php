@@ -103,7 +103,7 @@
 
         window.nursoft_ajax = {
             url: '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>',
-            nonce: '<?php echo esc_create_nonce( 'nursoft-fav-nonce' ); ?>',
+            nonce: '<?php echo wp_create_nonce( 'nursoft-fav-nonce' ); ?>',
             isLoggedIn: <?php echo ( function_exists( 'is_user_logged_in' ) && is_user_logged_in() ) ? 'true' : 'false'; ?>,
             userFavorites: <?php 
                 if ( function_exists( 'is_user_logged_in' ) && is_user_logged_in() && function_exists( 'get_current_user_id' ) ) {
