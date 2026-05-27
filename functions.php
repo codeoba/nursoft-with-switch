@@ -15,6 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly.
 }
 
+// Temporary debugging overrides to print the exact PHP error to screen
+@ini_set('display_errors', 1);
+@ini_set('display_startup_errors', 1);
+@error_reporting(E_ALL);
+
 /* ==========================================================================
    1. THEME SETUP & ENQUEUE ASSETS
    ========================================================================== */
