@@ -1207,6 +1207,13 @@ function nursoft_course_meta_box_html( $post ) {
     wp_nonce_field( 'nursoft_save_course_meta', 'nursoft_course_meta_nonce' );
     ?>
     <div class="nursoft-meta-wrapper" style="padding: 10px 0;">
+        <style>
+            .nursoft-meta-row { display: flex; align-items: center; margin-bottom: 15px; }
+            .nursoft-meta-label { width: 200px; flex-shrink: 0; font-weight: 600; }
+            .nursoft-meta-field { flex-grow: 1; }
+            .nursoft-meta-field input[type="text"], .nursoft-meta-field input[type="url"], .nursoft-meta-field input[type="number"], .nursoft-meta-field select, .nursoft-meta-field textarea { width: 100%; max-width: 500px; padding: 6px; }
+            .nursoft-meta-desc { font-size: 12px; color: #666; margin-top: 4px; }
+        </style>
         <div class="nursoft-meta-row">
             <div class="nursoft-meta-label"><label for="nursoft_course_instructor"><?php _e('Course Instructor', 'nursoft'); ?></label></div>
             <div class="nursoft-meta-field">
