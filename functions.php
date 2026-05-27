@@ -194,6 +194,197 @@ function nursoft_register_taxonomies() {
 }
 add_action( 'init', 'nursoft_register_taxonomies', 0 );
 
+/**
+ * Auto-initialize Platforms & E-Learning Categories
+ */
+function nursoft_auto_init_platforms_and_categories() {
+    // 1. Ensure "Books" and "Courses" exist in 'platform'
+    $platform_terms = array(
+        'books'   => 'Books',
+        'courses' => 'Courses',
+    );
+    
+    $platform_ids = array();
+    foreach ( $platform_terms as $slug => $name ) {
+        $term = get_term_by( 'slug', $slug, 'platform' );
+        if ( ! $term ) {
+            $created = wp_insert_term( $name, 'platform', array( 'slug' => $slug ) );
+            if ( ! is_wp_error( $created ) ) {
+                $platform_ids[$slug] = $created['term_id'];
+            }
+        } else {
+            $platform_ids[$slug] = $term->term_id;
+        }
+    }
+
+    // 2. Pre-populate parent categories under 'software_cat'
+    $parent_categories = array(
+        'books'   => array(
+            'name'     => 'Books',
+            'platform' => 'books',
+            'subs'     => array(
+                'technology-programming'  => 'Technology & Programming',
+                'business-finance'        => 'Business & Finance',
+                'science-mathematics'     => 'Science & Mathematics',
+                'self-help-development'   => 'Self-Help & Personal Development',
+                'novels-literature'       => 'Novels & Literature',
+                'biography-history'       => 'Biography & History',
+                'health-wellness'         => 'Health & Wellness',
+                'art-graphic-design'      => 'Art & Graphic Design',
+                'kids-education'          => 'Kids & Education',
+                'languages-reference'     => 'Languages & Reference',
+            )
+        ),
+        'courses' => array(
+            'name'     => 'Courses',
+            'platform' => 'courses',
+            'subs'     => array(
+                'web-development'         => 'Web Development',
+                'mobile-app-development'  => 'Mobile App Development',
+                'data-science-ai'         => 'Data Science & AI',
+                'graphic-design-ui-ux'    => 'Graphic Design & UI/UX',
+                'digital-marketing'       => 'Digital Marketing',
+                'python-backend'          => 'Python & Backend',
+                'photography-video'       => 'Photography & Video Editing',
+                'business-entrepreneur'   => 'Business & Entrepreneurship',
+                'language-learning'       => 'Language Learning',
+                'personal-finance'        => 'Personal Finance',
+            )
+        )
+    );
+
+    foreach ( $parent_categories as $key => $data ) {
+        // Check if parent category exists
+        $parent_term = get_term_by( 'slug', $key, 'software_cat' );
+        $parent_id = 0;
+        
+        if ( ! $parent_term ) {
+            $created_parent = wp_insert_term( $data['name'], 'software_cat', array( 'slug' => $key ) );
+            if ( ! is_wp_error( $created_parent ) ) {
+                $parent_id = $created_parent['term_id'];
+            }
+        } else {
+            $parent_id = $parent_term->term_id;
+        }
+
+        if ( $parent_id ) {
+            // Associate parent category with its platform
+            if ( isset( $platform_ids[$data['platform']] ) ) {
+                delete_term_meta( $parent_id, '_nursoft_associated_platforms' );
+                add_term_meta( $parent_id, '_nursoft_associated_platforms', $platform_ids[$data['platform']] );
+            }
+
+            // Create subcategories
+            foreach ( $data['subs'] as $sub_slug => $sub_name ) {
+                $sub_term = get_term_by( 'slug', $sub_slug, 'software_cat' );
+                $sub_id = 0;
+                
+                if ( ! $sub_term ) {
+                    $created_sub = wp_insert_term( $sub_name, 'software_cat', array(
+                        'slug'   => $sub_slug,
+                        'parent' => $parent_id,
+                    ) );
+                    if ( ! is_wp_error( $created_sub ) ) {
+                        $sub_id = $created_sub['term_id'];
+                    }
+                } else {
+                    $sub_id = $sub_term->term_id;
+                    // Ensure parent relation is set
+                    if ( intval( $sub_term->parent ) !== intval( $parent_id ) ) {
+                        wp_update_term( $sub_id, 'software_cat', array( 'parent' => $parent_id ) );
+                    }
+                }
+
+                if ( $sub_id && isset( $platform_ids[$data['platform']] ) ) {
+                    // Associate subcategory with its platform
+                    delete_term_meta( $sub_id, '_nursoft_associated_platforms' );
+                    add_term_meta( $sub_id, '_nursoft_associated_platforms', $platform_ids[$data['platform']] );
+                }
+            }
+        }
+    }
+}
+add_action( 'admin_init', 'nursoft_auto_init_platforms_and_categories' );
+
+/**
+ * Add Platform Selection field to the ADD Software Category screen
+ */
+function nursoft_software_cat_add_form_fields( $taxonomy ) {
+    $platforms = get_terms( array(
+        'taxonomy'   => 'platform',
+        'hide_empty' => false,
+    ) );
+    ?>
+    <div class="form-field term-platforms-wrap">
+        <label><?php _e( 'Associated Platforms', 'nursoft' ); ?></label>
+        <div style="max-height: 150px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background: #fff; border-radius: 4px;">
+            <?php if ( ! empty( $platforms ) && ! is_wp_error( $platforms ) ) : ?>
+                <?php foreach ( $platforms as $platform ) : ?>
+                    <label style="display: block; margin-bottom: 6px; font-weight: normal;">
+                        <input type="checkbox" name="associated_platforms[]" value="<?php echo esc_attr( $platform->term_id ); ?>" />
+                        <?php echo esc_html( $platform->name ); ?>
+                    </label>
+                <?php endforeach; ?>
+            <?php else : ?>
+                <p style="color: #999; margin: 0;"><?php _e( 'No platforms found. Please add platforms first.', 'nursoft' ); ?></p>
+            <?php endif; ?>
+        </div>
+        <p class="description"><?php _e( 'Select which platforms this category or sub-category belongs to. Used to display correct sub-categories on platform archive sidebars.', 'nursoft' ); ?></p>
+    </div>
+    <?php
+}
+add_action( 'software_cat_add_form_fields', 'nursoft_software_cat_add_form_fields', 10, 1 );
+
+/**
+ * Add Platform Selection field to the EDIT Software Category screen
+ */
+function nursoft_software_cat_edit_form_fields( $term, $taxonomy ) {
+    $platforms = get_terms( array(
+        'taxonomy'   => 'platform',
+        'hide_empty' => false,
+    ) );
+    $associated = get_term_meta( $term->term_id, '_nursoft_associated_platforms', false );
+    if ( ! is_array( $associated ) ) {
+        $associated = array();
+    }
+    ?>
+    <tr class="form-field term-platforms-wrap">
+        <th scope="row"><label><?php _e( 'Associated Platforms', 'nursoft' ); ?></label></th>
+        <td>
+            <div style="max-height: 150px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background: #fff; border-radius: 4px; max-width: 400px;">
+                <?php if ( ! empty( $platforms ) && ! is_wp_error( $platforms ) ) : ?>
+                    <?php foreach ( $platforms as $platform ) : ?>
+                        <label style="display: block; margin-bottom: 6px; font-weight: normal;">
+                            <input type="checkbox" name="associated_platforms[]" value="<?php echo esc_attr( $platform->term_id ); ?>" <?php checked( in_array( $platform->term_id, $associated ) ); ?> />
+                            <?php echo esc_html( $platform->name ); ?>
+                        </label>
+                    <?php endforeach; ?>
+                <?php else : ?>
+                    <p style="color: #999; margin: 0;"><?php _e( 'No platforms found. Please add platforms first.', 'nursoft' ); ?></p>
+                <?php endif; ?>
+            </div>
+            <p class="description"><?php _e( 'Select which platforms this category or sub-category belongs to. Used to display correct sub-categories on platform archive sidebars.', 'nursoft' ); ?></p>
+        </td>
+    </tr>
+    <?php
+}
+add_action( 'software_cat_edit_form_fields', 'nursoft_software_cat_edit_form_fields', 10, 2 );
+
+/**
+ * Save Associated Platforms when Category is created/edited
+ */
+function nursoft_save_software_cat_platforms( $term_id ) {
+    delete_term_meta( $term_id, '_nursoft_associated_platforms' );
+    if ( isset( $_POST['associated_platforms'] ) && is_array( $_POST['associated_platforms'] ) ) {
+        $platforms = array_map( 'intval', $_POST['associated_platforms'] );
+        foreach ( $platforms as $p_id ) {
+            add_term_meta( $term_id, '_nursoft_associated_platforms', $p_id );
+        }
+    }
+}
+add_action( 'created_software_cat', 'nursoft_save_software_cat_platforms', 10, 1 );
+add_action( 'edited_software_cat', 'nursoft_save_software_cat_platforms', 10, 1 );
+
 /* ==========================================================================
    3. CUSTOM FIELDS (METABOX) FOR SOFTWARE DATA
    ========================================================================== */

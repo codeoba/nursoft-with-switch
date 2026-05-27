@@ -188,6 +188,116 @@
     }
     </script>
 
+    <!-- Platform Specific Sub-Categories Sidebar Widget -->
+    <?php
+    $current_plat_id = 0;
+    $current_plat_name = '';
+    
+    if ( is_tax( 'platform' ) ) {
+        $q_obj = get_queried_object();
+        $current_plat_id = $q_obj->term_id;
+        $current_plat_name = $q_obj->name;
+    } elseif ( is_singular( 'software' ) ) {
+        $post_plats = wp_get_post_terms( get_the_ID(), 'platform' );
+        if ( ! empty( $post_plats ) && ! is_wp_error( $post_plats ) ) {
+            $current_plat_id = $post_plats[0]->term_id;
+            $current_plat_name = $post_plats[0]->name;
+        }
+    } elseif ( is_tax( 'software_cat' ) ) {
+        // If viewing category, check if this category belongs to a platform
+        $q_cat = get_queried_object();
+        $associated_plats = get_term_meta( $q_cat->term_id, '_nursoft_associated_platforms', false );
+        if ( ! empty( $associated_plats ) ) {
+            $current_plat_id = intval( $associated_plats[0] );
+            $plat_term = get_term( $current_plat_id, 'platform' );
+            if ( $plat_term && ! is_wp_error( $plat_term ) ) {
+                $current_plat_name = $plat_term->name;
+            }
+        }
+    }
+
+    if ( $current_plat_id ) :
+        // Fetch all categories and subcategories associated with this platform
+        $assoc_cats = get_terms( array(
+            'taxonomy'   => 'software_cat',
+            'hide_empty' => false,
+            'meta_query' => array(
+                array(
+                    'key'     => '_nursoft_associated_platforms',
+                    'value'   => $current_plat_id,
+                    'compare' => '=',
+                )
+            )
+        ) );
+
+        if ( ! empty( $assoc_cats ) && ! is_wp_error( $assoc_cats ) ) :
+            // Separate into parent and subcategories
+            $parent_cats = array();
+            $sub_cats = array();
+            foreach ( $assoc_cats as $c ) {
+                if ( $c->parent == 0 ) {
+                    $parent_cats[$c->term_id] = $c;
+                } else {
+                    $sub_cats[] = $c;
+                }
+            }
+            ?>
+            <div class="widget_box platform_subcategories_widget">
+                <h3 class="widget_title">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-blue);"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                    <span><?php printf( __( '%s Categories', 'nursoft' ), esc_html( $current_plat_name ) ); ?></span>
+                </h3>
+                <ul class="platform_cat_list">
+                    <?php 
+                    // If we have parent categories, render them with subcategories nested
+                    if ( ! empty( $parent_cats ) ) :
+                        foreach ( $parent_cats as $p_id => $p_cat ) :
+                            // Get subcategories under this specific parent
+                            $child_terms = array();
+                            foreach ( $sub_cats as $s ) {
+                                if ( intval( $s->parent ) === intval( $p_id ) ) {
+                                    $child_terms[] = $s;
+                                }
+                            }
+                            ?>
+                            <li class="platform_parent_cat_item">
+                                <div class="platform_parent_cat_title"><?php echo esc_html( $p_cat->name ); ?></div>
+                                <?php if ( ! empty( $child_terms ) ) : ?>
+                                    <ul class="platform_sub_list">
+                                        <?php foreach ( $child_terms as $child ) : 
+                                            $active_class = ( is_tax('software_cat', $child->slug) ) ? 'active' : '';
+                                            ?>
+                                            <li>
+                                                <a href="<?php echo esc_url( get_term_link( $child ) ); ?>" class="platform_sub_link <?php echo $active_class; ?>">
+                                                    <span><?php echo esc_html( $child->name ); ?></span>
+                                                    <span class="platform_sub_count"><?php echo $child->count; ?></span>
+                                                </a>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                <?php endif; ?>
+                            </li>
+                        <?php endforeach; ?>
+                    <?php else : 
+                        // If no parents are defined, list all associated terms directly
+                        foreach ( $assoc_cats as $cat ) :
+                            $active_class = ( is_tax('software_cat', $cat->slug) ) ? 'active' : '';
+                            ?>
+                            <li>
+                                <a href="<?php echo esc_url( get_term_link( $cat ) ); ?>" class="platform_sub_link <?php echo $active_class; ?>">
+                                    <span><?php echo esc_html( $cat->name ); ?></span>
+                                    <span class="platform_sub_count"><?php echo $cat->count; ?></span>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </ul>
+            </div>
+        <?php 
+        endif;
+    endif;
+    ?>
+
     <!-- 2. Dynamic Sidebar Widgets -->
     <?php 
     // 5. Sidebar Square Banner Ad Slot
