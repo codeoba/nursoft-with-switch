@@ -75,7 +75,7 @@
     </div>
 </header>
 
-<<div class="menu_wrap">
+<div class="menu_wrap">
     <div class="container">
         <nav class="menu_nav">
             <?php
