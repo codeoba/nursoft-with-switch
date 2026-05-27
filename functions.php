@@ -2216,24 +2216,6 @@ function nursoft_customize_register( $wp_customize ) {
         'section'  => 'nursoft_modules_section',
         'type'     => 'checkbox',
     ) );
-
-    // 4. Accent Color Customizer Setting
-    $wp_customize->add_section( 'nursoft_accent_section', array(
-        'title'       => __( 'Accent Color (Customizer)', 'nursoft' ),
-        'priority'    => 20,
-        'description' => __( 'Choose a custom accent color for links, glow states, buttons, and navigation badges.', 'nursoft' ),
-    ) );
-
-    $wp_customize->add_setting( 'nursoft_accent_color', array(
-        'default'           => '#0088ff',
-        'sanitize_callback' => 'sanitize_hex_color',
-    ) );
-
-    $wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'nursoft_accent_color', array(
-        'label'    => __( 'Accent Color', 'nursoft' ),
-        'section'  => 'nursoft_accent_section',
-        'settings' => 'nursoft_accent_color',
-    ) ) );
 }
 add_action( 'customize_register', 'nursoft_customize_register' );
 

@@ -16,19 +16,6 @@
     <link rel="profile" href="https://gmpg.org/xfn/11">
     <?php wp_head(); ?>
     <style>
-        :root {
-            <?php 
-            $accent_color = get_theme_mod( 'nursoft_accent_color', '#0088ff' );
-            if ( $accent_color !== '#0088ff' ) :
-                $accent_hover = nursoft_adjust_brightness( $accent_color, 25 );
-                $glow_shadow  = nursoft_hex2rgba( $accent_color, 0.25 );
-            ?>
-                --accent-blue: <?php echo esc_html( $accent_color ); ?>;
-                --accent-blue-hover: <?php echo esc_html( $accent_hover ); ?>;
-                --glow-blue: 0 0 15px <?php echo esc_html( $glow_shadow ); ?>;
-            <?php endif; ?>
-        }
-        
         /* Premium custom styles */
         .modal-tab-btn {
             position: relative;
