@@ -391,6 +391,26 @@ function nursoft_auto_init_platforms_and_categories() {
             wp_insert_term( $name, 'course_cat', array( 'slug' => $slug ) );
         }
     }
+
+    // 4. Pre-populate Software Categories in 'software_cat'
+    $software_subs = array(
+        'graphics-design'       => 'Graphics & Design',
+        'office-pdf'            => 'Office & PDF Tools',
+        'multimedia-audio'      => 'Multimedia & Audio',
+        'video-editors'         => 'Video Editors',
+        'operating-systems'     => 'Operating Systems',
+        'development-ides'      => 'Development & IDEs',
+        'internet-downloaders'  => 'Internet & Downloaders',
+        'antivirus-security'    => 'Antivirus & Security',
+        'system-utilities'      => 'System Utilities',
+        '3d-modeling-cad'       => '3D Modeling & CAD',
+    );
+    foreach ( $software_subs as $slug => $name ) {
+        $term = get_term_by( 'slug', $slug, 'software_cat' );
+        if ( ! $term ) {
+            wp_insert_term( $name, 'software_cat', array( 'slug' => $slug ) );
+        }
+    }
 }
 add_action( 'admin_init', 'nursoft_auto_init_platforms_and_categories' );
 
