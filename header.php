@@ -90,6 +90,11 @@
             // Append platforms (Windows, Mac, Android, Games)
             if ( ! empty( $platforms ) && ! is_wp_error( $platforms ) ) {
                 foreach ( $platforms as $platform ) {
+                    // Exclude Books and Courses from the shared platform terms query
+                    if ( $platform->slug === 'books' || $platform->slug === 'courses' ) {
+                        continue;
+                    }
+                    
                     $menu_items[] = array(
                         'slug'   => $platform->slug,
                         'name'   => $platform->name,
