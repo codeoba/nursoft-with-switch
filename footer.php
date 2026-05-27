@@ -103,7 +103,7 @@ if ( is_front_page() || is_home() ) {
             &copy; <?php echo date('Y'); ?> <strong style="color: var(--text-secondary);">NURSOFT</strong> &mdash;
             Designed &amp; Developed by <a href="mailto:codeoba@gmail.com" style="color: var(--accent-blue); text-decoration: none; font-weight: 600;">Mohamed Nurdin Mgaza</a>
             &mdash; Tanzania &middot;
-            <span style="color: var(--text-muted);">v1.9.3</span>
+            <span style="color: var(--text-muted);">v1.9.5</span>
         </p>
     </div>
 </div>

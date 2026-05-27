@@ -4,7 +4,7 @@
  *
  * @author  Mohamed Nurdin Mgaza <codeoba@gmail.com>
  * @country Tanzania | +687001775
- * @version 1.9.3
+ * @version 1.9.5
  * @package Nursoft
  */
 ?>
@@ -946,6 +946,107 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('nursoft-theme', newTheme);
         });
     }
+
+    // ==========================================================================
+    // ⚔️ PREMIUM GOD-MODE FEATURE 1: Instant Link Pre-fetching (Kasi ya Mwanga)
+    // ==========================================================================
+    const prefetchedLinks = new Set();
+    function prefetchUrl(url) {
+        if (!url || prefetchedLinks.has(url) || url.includes('#') || url.includes('wp-admin') || url.includes('logout')) return;
+        prefetchedLinks.add(url);
+        const link = document.createElement('link');
+        link.rel = 'prefetch';
+        link.href = url;
+        document.head.appendChild(link);
+    }
+
+    // Listen to mouse hovers on any post links
+    document.addEventListener('mouseover', function(e) {
+        const anchor = e.target.closest('a');
+        if (anchor && anchor.href && anchor.href.startsWith(window.location.origin)) {
+            // Initiate prefetch immediately upon hover
+            prefetchUrl(anchor.href);
+        }
+    });
+
+    // ==========================================================================
+    // ⚔️ PREMIUM GOD-MODE FEATURE 2: Intelligent Anti-AdBlocker (Zero Block)
+    // ==========================================================================
+    function checkAdBlocker() {
+        // Create an unblockable bait element using dynamic obfuscated IDs
+        const randomAdClass = 'pub_300x250 pub_300x250m pub_728x90 text-ad ad-text text-ads';
+        const bait = document.createElement('div');
+        bait.className = randomAdClass;
+        bait.setAttribute('style', 'position:absolute;left:-9999px;width:1px;height:1px;');
+        document.body.appendChild(bait);
+
+        setTimeout(function() {
+            // Check if bait has been collapsed or hidden by AdBlocker
+            if (bait.offsetHeight === 0 || bait.clientWidth === 0 || window.getComputedStyle(bait).display === 'none') {
+                showPremiumAdBlockNotice();
+            }
+            bait.remove();
+        }, 100);
+    }
+
+    function showPremiumAdBlockNotice() {
+        // Only show if alert has not been cleared in this session
+        if (sessionStorage.getItem('nursoft_adblock_warned') === 'true') return;
+
+        const notice = document.createElement('div');
+        notice.id = 'nursoft-adblock-shield';
+        notice.setAttribute('style', `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999999;
+            background: linear-gradient(135deg, var(--bg-surface), var(--bg-element));
+            border: 1px solid var(--accent-magenta);
+            border-radius: 16px;
+            padding: 20px;
+            width: 320px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7), 0 0 15px rgba(255,0,128,0.2);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            animation: slideUp 0.4s ease-out;
+        `);
+
+        notice.innerHTML = `
+            <div style="display:flex;align-items:center;gap:10px;">
+                <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(255,0,128,0.1);color:var(--accent-magenta);">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                </span>
+                <span style="font-weight:700;font-size:14px;color:var(--text-primary);">AdBlocker Detected!</span>
+            </div>
+            <p style="margin:0;font-size:11.5px;line-height:1.5;color:var(--text-muted);">
+                We scan all downloads for safety & high-speed links. Please disable your AdBlocker to support the continuous free updates.
+            </p>
+            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px;">
+                <button id="adblock-ignore-btn" style="background:var(--bg-surface-hover);border:1px solid var(--border-color);border-radius:8px;padding:6px 12px;color:var(--text-secondary);font-size:11px;font-weight:600;cursor:pointer;">Ignore</button>
+                <button id="adblock-disable-btn" style="background:linear-gradient(135deg,var(--accent-magenta),#ff3f80);border:none;border-radius:8px;padding:6px 12px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;box-shadow:0 4px 10px rgba(255,0,128,0.2);">How to disable?</button>
+            </div>
+        `;
+
+        document.body.appendChild(notice);
+
+        // Bind events
+        document.getElementById('adblock-ignore-btn').addEventListener('click', function() {
+            sessionStorage.setItem('nursoft_adblock_warned', 'true');
+            notice.remove();
+        });
+
+        document.getElementById('adblock-disable-btn').addEventListener('click', function() {
+            alert("To support NURSOFT:\n1. Click your AdBlocker icon in your browser toolbar.\n2. Click 'Pause on this site' or toggle off.\n3. Reload the page.\n\nThank you for standing with us!");
+        });
+    }
+
+    // Run the unblockable check after page finishes initial load
+    window.addEventListener('load', function() {
+        setTimeout(checkAdBlocker, 1500);
+    });
 });
 </script>
 
