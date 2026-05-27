@@ -243,7 +243,7 @@ function nursoft_register_taxonomies() {
         'rewrite'           => array( 'slug' => 'platform' ),
         'show_in_rest'      => true,
     );
-    register_taxonomy( 'platform', array( 'software', 'book', 'course' ), $platform_args );
+    register_taxonomy( 'platform', array( 'software' ), $platform_args );
 
     // 2. Software Category Taxonomy (Graphics, Utilities, PDF, etc. - ONLY for software CPT)
     $cat_labels = array(
@@ -339,25 +339,6 @@ add_action( 'pre_get_posts', 'nursoft_platform_archive_include_cpts' );
  * Auto-initialize Platforms & E-Learning Categories
  */
 function nursoft_auto_init_platforms_and_categories() {
-    // 1. Ensure "Books" and "Courses" exist in 'platform'
-    $platform_terms = array(
-        'books'   => 'Books',
-        'courses' => 'Courses',
-    );
-    
-    $platform_ids = array();
-    foreach ( $platform_terms as $slug => $name ) {
-        $term = get_term_by( 'slug', $slug, 'platform' );
-        if ( ! $term ) {
-            $created = wp_insert_term( $name, 'platform', array( 'slug' => $slug ) );
-            if ( ! is_wp_error( $created ) ) {
-                $platform_ids[$slug] = $created['term_id'];
-            }
-        } else {
-            $platform_ids[$slug] = $term->term_id;
-        }
-    }
-
     // 2. Pre-populate Book Categories in 'book_cat'
     $book_subs = array(
         'technology-programming'  => 'Technology & Programming',
@@ -499,6 +480,22 @@ function nursoft_add_software_metaboxes() {
         __( 'Software Specifications (Nursoft/FileCR)', 'nursoft' ),
         'nursoft_software_meta_box_html',
         'software',
+        'normal',
+        'high'
+    );
+    add_meta_box(
+        'nursoft_book_details',
+        __( 'Book Specifications (Nursoft/FileCR)', 'nursoft' ),
+        'nursoft_book_meta_box_html',
+        'book',
+        'normal',
+        'high'
+    );
+    add_meta_box(
+        'nursoft_course_details',
+        __( 'Course Specifications (Nursoft/FileCR)', 'nursoft' ),
+        'nursoft_course_meta_box_html',
+        'course',
         'normal',
         'high'
     );
