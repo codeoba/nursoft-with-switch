@@ -326,14 +326,38 @@ function nursoft_register_taxonomies() {
 add_action( 'init', 'nursoft_register_taxonomies', 0 );
 
 /**
- * Include all three CPTs in platform taxonomy queries
+ * Unified sorting interceptor for archive queries (Platforms, Categories, and Search)
  */
-function nursoft_platform_archive_include_cpts( $query ) {
-    if ( ! is_admin() && $query->is_main_query() && is_tax( 'platform' ) ) {
-        $query->set( 'post_type', array( 'software', 'book', 'course' ) );
+function nursoft_archive_sorting_pre_get_posts( $query ) {
+    if ( ! is_admin() && $query->is_main_query() ) {
+        // 1. Ensure all CPTs display in platform taxonomies
+        if ( is_tax( 'platform' ) ) {
+            $query->set( 'post_type', array( 'software', 'book', 'course' ) );
+        }
+
+        // 2. Intercept sorting parameters
+        if ( is_tax( 'platform' ) || is_tax( 'software_cat' ) || is_tax( 'book_cat' ) || is_tax( 'course_cat' ) || is_post_type_archive( array( 'software', 'book', 'course' ) ) || is_archive() ) {
+            $sort = isset( $_GET['sort'] ) ? sanitize_text_field( $_GET['sort'] ) : 'updated';
+            
+            if ( $sort === 'new' ) {
+                $query->set( 'orderby', 'date' );
+                $query->set( 'order', 'DESC' );
+            } elseif ( $sort === 'updated' ) {
+                $query->set( 'orderby', 'modified' );
+                $query->set( 'order', 'DESC' );
+            } elseif ( $sort === 'downloads' ) {
+                $query->set( 'meta_key', '_nursoft_downloads' );
+                $query->set( 'orderby', 'meta_value_num' );
+                $query->set( 'order', 'DESC' );
+            } elseif ( $sort === 'rating' ) {
+                $query->set( 'meta_key', '_nursoft_reputation' );
+                $query->set( 'orderby', 'meta_value_num' );
+                $query->set( 'order', 'DESC' );
+            }
+        }
     }
 }
-add_action( 'pre_get_posts', 'nursoft_platform_archive_include_cpts' );
+add_action( 'pre_get_posts', 'nursoft_archive_sorting_pre_get_posts', 20 );
 
 function nursoft_auto_init_platforms_and_categories() {
     // 0. Clean up old legacy Book/Course terms if they exist in the 'software_cat' taxonomy

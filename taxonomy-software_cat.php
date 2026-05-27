@@ -18,9 +18,26 @@ $current_cat = get_queried_object();
         <div class="software_main_col">
             <section class="products_section">
         <!-- Archive Header Title -->
-        <div class="section-header">
-            <h4><?php echo sprintf( __('Category: %s', 'nursoft'), esc_html( $current_cat->name ) ); ?></h4>
-            <span style="font-size: 13px; color: var(--text-secondary);"><?php echo $current_cat->count; ?> <?php _e('Software items available', 'nursoft'); ?></span>
+        <div class="section-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
+            <div>
+                <h4 style="font-family: var(--font-heading); font-size: 24px; font-weight: 700; margin: 0; color: var(--text-primary);">
+                    <?php echo esc_html( $current_cat->name ); ?>
+                </h4>
+                <span style="font-size: 13px; color: var(--text-secondary);"><?php echo $current_cat->count; ?> <?php _e('items available', 'nursoft'); ?></span>
+            </div>
+            
+            <!-- Sorting Dropdown -->
+            <div class="archive_sort_wrap" style="position: relative; display: inline-block;">
+                <select onchange="location = this.value;" style="background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px 16px; font-size: 13.5px; font-weight: 600; color: var(--text-secondary); cursor: pointer; transition: all var(--transition-fast); outline: none; border-color: rgba(255, 255, 255, 0.1);">
+                    <?php
+                    $sort = isset( $_GET['sort'] ) ? sanitize_text_field( $_GET['sort'] ) : 'updated';
+                    ?>
+                    <option value="<?php echo esc_url( add_query_arg( 'sort', 'updated' ) ); ?>" <?php selected( $sort, 'updated' ); ?>><?php _e('Recently Updated', 'nursoft'); ?></option>
+                    <option value="<?php echo esc_url( add_query_arg( 'sort', 'new' ) ); ?>" <?php selected( $sort, 'new' ); ?>><?php _e('Newest Releases', 'nursoft'); ?></option>
+                    <option value="<?php echo esc_url( add_query_arg( 'sort', 'downloads' ) ); ?>" <?php selected( $sort, 'downloads' ); ?>><?php _e('Most Downloaded', 'nursoft'); ?></option>
+                    <option value="<?php echo esc_url( add_query_arg( 'sort', 'rating' ) ); ?>" <?php selected( $sort, 'rating' ); ?>><?php _e('Highest Rated', 'nursoft'); ?></option>
+                </select>
+            </div>
         </div>
 
         <?php if ( have_posts() ) : ?>
