@@ -535,17 +535,48 @@ get_header(); ?>
                     </section>
                 <?php endif; ?>
 
-                <!-- Installation Instructions Toggle Box -->
+                <!-- Installation Instructions Spoiler (Closed by default with premium gradient borders) -->
                 <?php if ( ! empty( $instructions ) ) : ?>
-                    <section class="instructions_toggle_box" style="margin-top: 20px;">
-                        <details class="instructions_details" open>
-                            <summary class="instructions_summary">
-                                <span class="summary_arrow">▼</span>
-                                <span><?php _e('Installation Instructions', 'nursoft'); ?></span>
+                    <section class="instructions_toggle_box" style="margin-top: 25px;">
+                        <details class="instructions_details" style="background:var(--bg-element); border:1px solid var(--border-color); border-radius:12px; overflow:hidden; transition:all 0.3s ease;">
+                            <summary class="instructions_summary" style="list-style:none; padding:15px 20px; font-weight:700; font-size:14px; color:var(--text-primary); cursor:pointer; display:flex; align-items:center; justify-content:space-between; user-select:none; transition:background var(--transition-fast);" onmouseover="this.style.background='var(--bg-surface-hover)'" onmouseout="this.style.background='none'">
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    <span style="display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:8px; background:rgba(0,180,219,0.1); color:var(--accent-blue);">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                                    </span>
+                                    <span style="letter-spacing:0.3px;"><?php _e('Installation Instructions', 'nursoft'); ?></span>
+                                    <span style="font-size:10px; font-weight:800; background:var(--accent-magenta); color:#fff; padding:1px 6px; border-radius:4px; margin-left:6px; box-shadow:0 0 10px rgba(255,0,128,0.4); text-transform:uppercase;"><?php _e('Spoiler', 'nursoft'); ?></span>
+                                </div>
+                                <span class="summary_arrow" style="font-size:12px; color:var(--accent-blue); transition:transform 0.3s; transform:rotate(-90deg);">▼</span>
                             </summary>
-                            <div class="instructions_content"><?php echo esc_html( $instructions ); ?></div>
+                            <div class="instructions_content" style="padding:20px; border-top:1px solid var(--border-color); font-size:13px; line-height:1.6; color:var(--text-secondary); background:rgba(0,0,0,0.1); word-break:break-word; white-space:pre-wrap;">
+                                <?php echo esc_html( $instructions ); ?>
+                            </div>
                         </details>
                     </section>
+
+                    <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const details = document.querySelector('.instructions_details');
+                        if (details) {
+                            const summary = details.querySelector('.instructions_summary');
+                            const arrow = details.querySelector('.summary_arrow');
+                            
+                            summary.addEventListener('click', function(e) {
+                                // Add dynamic glowing effect on toggle
+                                if (!details.open) {
+                                    details.style.borderColor = 'var(--accent-blue)';
+                                    details.style.boxShadow = '0 0 15px rgba(0,180,219,0.15)';
+                                    arrow.style.transform = 'rotate(0deg)';
+                                } else {
+                                    details.style.borderColor = 'var(--border-color)';
+                                    details.style.boxShadow = 'none';
+                                    arrow.style.transform = 'rotate(-90deg)';
+                                }
+                            });
+                        }
+                    });
+                    </script>
                 <?php endif; ?>
 
                 </div><!-- /.soft_content_card -->
