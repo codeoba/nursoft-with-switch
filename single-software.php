@@ -597,8 +597,7 @@ get_header(); ?>
                 if ( empty($direct_download) && ! empty($old_url) ) {
                     $direct_download = $old_url;
                 }
-                ?>
-                <section class="download_box">
+                                <section class="download_box">
                     <div class="download_box_icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -16 512 512" fill="currentColor" style="width: 48px; height: 48px;">
                             <path d="M413.492 128.91C396.2 42.145 311.844-14.172 225.078 3.121 161.618 15.77 111.996 65.36 99.308 128.813 37.79 135.903-6.34 191.52.747 253.043c6.524 56.621 54.48 99.34 111.477 99.3h80.093c8.848 0 16.02-7.171 16.02-16.019s-7.172-16.02-16.02-16.02h-80.093c-44.239-.261-79.883-36.331-79.625-80.566.261-44.238 36.332-79.886 80.57-79.625 8.164 0 15.023-6.14 15.922-14.258 8.133-70.304 71.723-120.707 142.031-112.574 59.11 6.836 105.738 53.465 112.574 112.574 1.344 8.262 8.5 14.313 16.867 14.258 44.239 0 80.098 35.86 80.098 80.098 0 44.234-35.86 80.094-80.098 80.094H320.47c-8.848 0-16.02 7.172-16.02 16.02s7.172 16.019 16.02 16.019h80.097c61.926-.387 111.817-50.903 111.434-112.828-.352-56.395-42.531-103.754-98.508-110.606m0 0"></path>
@@ -611,18 +610,18 @@ get_header(); ?>
                     <div style="display: flex; flex-direction: column; gap: 12px; align-items: center; justify-content: center; max-width: 320px; margin: 0 auto;">
                         <!-- 1. Direct Download Button -->
                         <?php if ( ! empty( $direct_download ) ) : ?>
-                            <a href="<?php echo esc_url( add_query_arg( array( 'nursoft_action' => 'download_portal', 'post_id' => get_the_ID(), 'version_idx' => 0, 'type' => 'direct' ), home_url('/') ) ); ?>" class="download_btn" style="width: 100%;" target="_blank">
+                            <button class="download_btn nursoft-modal-dl-trigger" style="width: 100%; border: none;" data-dl-type="direct" data-dl-url="<?php echo esc_url( add_query_arg( array( 'nursoft_action' => 'download_portal', 'post_id' => get_the_ID(), 'version_idx' => 0, 'type' => 'direct' ), home_url('/') ) ); ?>">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
                                 <span><?php _e('Direct Download', 'nursoft'); ?></span>
-                            </a>
+                            </button>
                         <?php endif; ?>
 
                         <!-- 2. Torrent Download Button -->
                         <?php if ( ! empty( $torrent_download ) ) : ?>
-                            <a href="<?php echo esc_url( add_query_arg( array( 'nursoft_action' => 'download_portal', 'post_id' => get_the_ID(), 'version_idx' => 0, 'type' => 'torrent' ), home_url('/') ) ); ?>" class="download_btn" style="width: 100%; background: linear-gradient(135deg, #00b4db, #0083b0); box-shadow: 0 4px 15px rgba(0, 180, 219, 0.3);" target="_blank">
+                            <button class="download_btn nursoft-modal-dl-trigger" style="width: 100%; border: none; background: linear-gradient(135deg, #00b4db, #0083b0); box-shadow: 0 4px 15px rgba(0, 180, 219, 0.3);" data-dl-type="torrent" data-dl-url="<?php echo esc_url( add_query_arg( array( 'nursoft_action' => 'download_portal', 'post_id' => get_the_ID(), 'version_idx' => 0, 'type' => 'torrent' ), home_url('/') ) ); ?>">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="fill:currentColor;"><path d="M12 2C7.58 2 4 5.58 4 10v4c0 3.31 2.69 6 6 6h4c3.31 0 6-2.69 6-6v-4c0-4.42-3.58-8-8-8zm6 12c0 2.21-1.79 4-4 4h-4c-2.21 0-4-1.79-4-4v-4c0-3.31 2.69-6 6-6s6 2.69 6 6v4zM8 10h2v2H8zm6 0h2v2h-2z"/></svg>
                                 <span><?php _e('Torrent Download', 'nursoft'); ?></span>
-                            </a>
+                            </button>
                         <?php endif; ?>
 
                         <!-- Fallback if both links are empty -->
@@ -633,6 +632,110 @@ get_header(); ?>
                         <?php endif; ?>
                     </div>
                 </section>
+
+                <!-- Premium Interactive Countdown Download Modal with Ad Slot -->
+                <div class="nursoft-dl-modal-overlay" id="nursoft-dl-modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); z-index:9999999; align-items:center; justify-content:center; padding:16px;">
+                    <div class="nursoft-dl-modal-card" style="background:var(--bg-surface); border:1px solid var(--border-color); border-radius:20px; max-width:480px; width:100%; padding:30px; position:relative; box-shadow:0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(0,136,255,0.15); display:flex; flex-direction:column; align-items:center; gap:20px; text-align:center;">
+                        
+                        <button id="nursoft-dl-modal-close" style="position:absolute; top:15px; right:15px; background:none; border:none; color:var(--text-muted); font-size:24px; cursor:pointer; line-height:1; transition:color var(--transition-fast);" onmouseover="this.style.color='var(--accent-magenta)'" onmouseout="this.style.color='var(--text-muted)'">&times;</button>
+                        
+                        <div id="dl-modal-icon-wrap" style="width:64px; height:64px; border-radius:50%; background:rgba(0,136,255,0.1); color:var(--accent-blue); display:flex; align-items:center; justify-content:center;">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32" fill="currentColor" class="dl-spin-svg" style="animation: spin 3s linear infinite;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 10V7h-2v5H8l4 4 4-4h-3z"/></svg>
+                        </div>
+                        
+                        <h4 style="margin:0; font-size:18px; font-weight:700; color:var(--text-primary);" id="dl-modal-headline"><?php _e('Generating Download Link', 'nursoft'); ?></h4>
+                        <p style="margin:0; font-size:13px; color:var(--text-secondary); line-height:1.5;" id="dl-modal-desc"><?php _e('Please wait a few seconds while we verify your high-speed mirror...', 'nursoft'); ?></p>
+                        
+                        <!-- Real-time Countdown display -->
+                        <div id="dl-modal-timer-container" style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                            <span id="dl-modal-seconds" style="font-size:36px; font-weight:800; color:var(--accent-magenta); font-family:var(--font-heading); text-shadow:0 0 10px rgba(255,0,128,0.3);">5</span>
+                            <span style="font-size:11px; text-transform:uppercase; font-weight:700; color:var(--text-muted); letter-spacing:1px;"><?php _e('seconds remaining', 'nursoft'); ?></span>
+                        </div>
+
+                        <!-- Obfuscated Dynamic Premium Ad Slot -->
+                        <div class="nursoft-obfuscated-ad-slot" style="width:100%; min-height:100px; padding:10px; background:var(--bg-element); border:1px dashed var(--border-color); border-radius:12px; display:flex; align-items:center; justify-content:center;">
+                            <?php 
+                            $modal_ad = get_theme_mod('nursoft_ad_download_modal', '');
+                            if ( ! empty($modal_ad) ) {
+                                echo $modal_ad;
+                            } else {
+                                echo '<span style="font-size:11px; color:var(--text-muted); font-style:italic;">Sponsored Advertisement</span>';
+                            }
+                            ?>
+                        </div>
+
+                        <!-- Target Real Action Download Button -->
+                        <a href="#" id="nursoft-dl-final-link" class="download_btn" style="width:100%; display:none; justify-content:center; border:none; background:linear-gradient(135deg, #2bcbba, #00d2a0); box-shadow:0 4px 15px rgba(43,203,186,0.3);">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
+                            <span><?php _e('Download Now', 'nursoft'); ?></span>
+                        </a>
+                    </div>
+                </div>
+
+                <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const modalOverlay = document.getElementById('nursoft-dl-modal-overlay');
+                    const modalClose = document.getElementById('nursoft-dl-modal-close');
+                    const modalSeconds = document.getElementById('dl-modal-seconds');
+                    const modalTimerContainer = document.getElementById('dl-modal-timer-container');
+                    const modalFinalLink = document.getElementById('nursoft-dl-final-link');
+                    const modalHeadline = document.getElementById('dl-modal-headline');
+                    const modalDesc = document.getElementById('dl-modal-desc');
+                    const modalIconWrap = document.getElementById('dl-modal-icon-wrap');
+                    let countdownTimer;
+
+                    document.querySelectorAll('.nursoft-modal-dl-trigger').forEach(trigger => {
+                        trigger.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            const dlUrl = this.getAttribute('data-dl-url');
+                            
+                            // Initialize modal states
+                            modalOverlay.style.display = 'flex';
+                            modalTimerContainer.style.display = 'flex';
+                            modalFinalLink.style.display = 'none';
+                            modalFinalLink.href = dlUrl;
+                            modalHeadline.textContent = "<?php _e('Generating Download Link', 'nursoft'); ?>";
+                            modalDesc.textContent = "<?php _e('Please wait a few seconds while we verify your high-speed mirror...', 'nursoft'); ?>";
+                            modalIconWrap.style.background = 'rgba(0,136,255,0.1)';
+                            modalIconWrap.style.color = 'var(--accent-blue)';
+
+                            let count = 5;
+                            modalSeconds.textContent = count;
+
+                            clearInterval(countdownTimer);
+                            countdownTimer = setInterval(() => {
+                                count--;
+                                modalSeconds.textContent = count;
+                                if (count <= 0) {
+                                    clearInterval(countdownTimer);
+                                    // Transform modal to success download state
+                                    modalTimerContainer.style.display = 'none';
+                                    modalFinalLink.style.display = 'flex';
+                                    modalHeadline.textContent = "<?php _e('Link Ready!', 'nursoft'); ?>";
+                                    modalDesc.textContent = "<?php _e('Your secure download file is prepared. Click the button below to start.', 'nursoft'); ?>";
+                                    modalIconWrap.style.background = 'rgba(43,203,186,0.1)';
+                                    modalIconWrap.style.color = '#2bcbba';
+                                    
+                                    // Trigger immediate download automatically in new tab
+                                    window.open(dlUrl, '_blank');
+                                }
+                            }, 1000);
+                        });
+                    });
+
+                    function closeModal() {
+                        clearInterval(countdownTimer);
+                        modalOverlay.style.display = 'none';
+                    }
+
+                    if (modalClose) {
+                        modalClose.addEventListener('click', closeModal);
+                    }
+                    modalOverlay.addEventListener('click', function(e) {
+                        if (e.target === modalOverlay) closeModal();
+                    });
+                });
+                </script>
 
                 <!-- Version History Box — Compact Collapsible -->
                 <?php if ( ! empty( $versions_list ) && is_array( $versions_list ) ) :

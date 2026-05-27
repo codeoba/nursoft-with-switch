@@ -4,7 +4,7 @@
  *
  * @author  Mohamed Nurdin Mgaza <codeoba@gmail.com>
  * @country Tanzania | +687001775
- * @version 1.9.9
+ * @version 2.0.0
  * @package Nursoft
  */
 ?>
