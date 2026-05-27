@@ -192,43 +192,78 @@
     <?php
     $current_plat_id = 0;
     $current_plat_name = '';
+    $target_taxonomy = '';
     
     if ( is_tax( 'platform' ) ) {
         $q_obj = get_queried_object();
         $current_plat_id = $q_obj->term_id;
         $current_plat_name = $q_obj->name;
-    } elseif ( is_singular( 'software' ) ) {
-        $post_plats = wp_get_post_terms( get_the_ID(), 'platform' );
-        if ( ! empty( $post_plats ) && ! is_wp_error( $post_plats ) ) {
-            $current_plat_id = $post_plats[0]->term_id;
-            $current_plat_name = $post_plats[0]->name;
+        
+        if ( $q_obj->slug === 'books' ) {
+            $target_taxonomy = 'book_cat';
+        } elseif ( $q_obj->slug === 'courses' ) {
+            $target_taxonomy = 'course_cat';
+        } else {
+            $target_taxonomy = 'software_cat';
         }
-    } elseif ( is_tax( 'software_cat' ) ) {
-        // If viewing category, check if this category belongs to a platform
-        $q_cat = get_queried_object();
-        $associated_plats = get_term_meta( $q_cat->term_id, '_nursoft_associated_platforms', false );
-        if ( ! empty( $associated_plats ) ) {
-            $current_plat_id = intval( $associated_plats[0] );
-            $plat_term = get_term( $current_plat_id, 'platform' );
-            if ( $plat_term && ! is_wp_error( $plat_term ) ) {
-                $current_plat_name = $plat_term->name;
+    } elseif ( is_singular( 'book' ) || is_tax( 'book_cat' ) ) {
+        $target_taxonomy = 'book_cat';
+        $current_plat_name = __( 'Books', 'nursoft' );
+        $books_plat = get_term_by( 'slug', 'books', 'platform' );
+        if ( $books_plat ) {
+            $current_plat_id = $books_plat->term_id;
+        }
+    } elseif ( is_singular( 'course' ) || is_tax( 'course_cat' ) ) {
+        $target_taxonomy = 'course_cat';
+        $current_plat_name = __( 'Courses', 'nursoft' );
+        $courses_plat = get_term_by( 'slug', 'courses', 'platform' );
+        if ( $courses_plat ) {
+            $current_plat_id = $courses_plat->term_id;
+        }
+    } elseif ( is_singular( 'software' ) || is_tax( 'software_cat' ) ) {
+        $target_taxonomy = 'software_cat';
+        
+        if ( is_singular( 'software' ) ) {
+            $post_plats = wp_get_post_terms( get_the_ID(), 'platform' );
+            if ( ! empty( $post_plats ) && ! is_wp_error( $post_plats ) ) {
+                $current_plat_id = $post_plats[0]->term_id;
+                $current_plat_name = $post_plats[0]->name;
+            }
+        } else {
+            $q_cat = get_queried_object();
+            $associated_plats = get_term_meta( $q_cat->term_id, '_nursoft_associated_platforms', false );
+            if ( ! empty( $associated_plats ) ) {
+                $current_plat_id = intval( $associated_plats[0] );
+                $plat_term = get_term( $current_plat_id, 'platform' );
+                if ( $plat_term && ! is_wp_error( $plat_term ) ) {
+                    $current_plat_name = $plat_term->name;
+                }
             }
         }
     }
 
-    if ( $current_plat_id ) :
-        // Fetch all categories and subcategories associated with this platform
-        $assoc_cats = get_terms( array(
-            'taxonomy'   => 'software_cat',
-            'hide_empty' => false,
-            'meta_query' => array(
-                array(
-                    'key'     => '_nursoft_associated_platforms',
-                    'value'   => $current_plat_id,
-                    'compare' => '=',
+    if ( ! empty( $target_taxonomy ) ) :
+        // Fetch categories
+        if ( $target_taxonomy === 'book_cat' || $target_taxonomy === 'course_cat' ) {
+            // Load all categories for books/courses
+            $assoc_cats = get_terms( array(
+                'taxonomy'   => $target_taxonomy,
+                'hide_empty' => false,
+            ) );
+        } else {
+            // Load associated categories for software platforms
+            $assoc_cats = get_terms( array(
+                'taxonomy'   => 'software_cat',
+                'hide_empty' => false,
+                'meta_query' => array(
+                    array(
+                        'key'     => '_nursoft_associated_platforms',
+                        'value'   => $current_plat_id,
+                        'compare' => '=',
+                    )
                 )
-            )
-        ) );
+            ) );
+        }
 
         if ( ! empty( $assoc_cats ) && ! is_wp_error( $assoc_cats ) ) :
             // Separate into parent and subcategories
@@ -265,7 +300,7 @@
                                 <?php if ( ! empty( $child_terms ) ) : ?>
                                     <ul class="platform_sub_list">
                                         <?php foreach ( $child_terms as $child ) : 
-                                            $active_class = ( is_tax('software_cat', $child->slug) ) ? 'active' : '';
+                                            $active_class = ( is_tax($target_taxonomy, $child->slug) ) ? 'active' : '';
                                             ?>
                                             <li>
                                                 <a href="<?php echo esc_url( get_term_link( $child ) ); ?>" class="platform_sub_link <?php echo $active_class; ?>">
@@ -281,7 +316,7 @@
                     <?php else : 
                         // If no parents are defined, list all associated terms directly
                         foreach ( $assoc_cats as $cat ) :
-                            $active_class = ( is_tax('software_cat', $cat->slug) ) ? 'active' : '';
+                            $active_class = ( is_tax($target_taxonomy, $cat->slug) ) ? 'active' : '';
                             ?>
                             <li>
                                 <a href="<?php echo esc_url( get_term_link( $cat ) ); ?>" class="platform_sub_link <?php echo $active_class; ?>">

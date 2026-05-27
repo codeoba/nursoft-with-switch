@@ -93,8 +93,8 @@ add_action( 'wp_enqueue_scripts', 'nursoft_scripts' );
    2. CUSTOM POST TYPE & TAXONOMIES
    ========================================================================== */
 function nursoft_register_software_cpt() {
-    // Labels for CPT
-    $labels = array(
+    // 1. Software CPT
+    $software_labels = array(
         'name'                  => _x( 'Software', 'Post Type General Name', 'nursoft' ),
         'singular_name'         => _x( 'Software Item', 'Post Type Singular Name', 'nursoft' ),
         'menu_name'             => __( 'Software', 'nursoft' ),
@@ -111,12 +111,12 @@ function nursoft_register_software_cpt() {
         'not_found_in_trash'    => __( 'Not found in Trash', 'nursoft' ),
     );
 
-    $args = array(
+    $software_args = array(
         'label'                 => __( 'Software Item', 'nursoft' ),
         'description'           => __( 'Custom CPT for listing downloadable software items.', 'nursoft' ),
-        'labels'                => $labels,
+        'labels'                => $software_labels,
         'supports'              => array( 'title', 'editor', 'thumbnail', 'excerpt', 'comments' ),
-        'taxonomies'            => array( 'post_tag' ), // Enable standard WordPress Tags support
+        'taxonomies'            => array( 'post_tag' ),
         'hierarchical'          => false,
         'public'                => true,
         'show_ui'               => true,
@@ -129,18 +129,97 @@ function nursoft_register_software_cpt() {
         'exclude_from_search'   => false,
         'publicly_queryable'    => true,
         'capability_type'       => 'post',
-        'show_in_rest'          => true, // Enable Block Editor & Rest API
+        'show_in_rest'          => true,
+    );
+    register_post_type( 'software', $software_args );
+
+    // 2. Book CPT (New)
+    $book_labels = array(
+        'name'                  => _x( 'Books', 'Post Type General Name', 'nursoft' ),
+        'singular_name'         => _x( 'Book Item', 'Post Type Singular Name', 'nursoft' ),
+        'menu_name'             => __( 'Books', 'nursoft' ),
+        'name_admin_bar'        => __( 'Book', 'nursoft' ),
+        'all_items'             => __( 'All Books', 'nursoft' ),
+        'add_new_item'          => __( 'Add New Book', 'nursoft' ),
+        'add_new'               => __( 'Add New', 'nursoft' ),
+        'new_item'              => __( 'New Book', 'nursoft' ),
+        'edit_item'             => __( 'Edit Book', 'nursoft' ),
+        'update_item'           => __( 'Update Book', 'nursoft' ),
+        'view_item'             => __( 'View Book', 'nursoft' ),
+        'search_items'          => __( 'Search Books', 'nursoft' ),
+        'not_found'             => __( 'No books found', 'nursoft' ),
+        'not_found_in_trash'    => __( 'No books found in Trash', 'nursoft' ),
     );
 
-    register_post_type( 'software', $args );
+    $book_args = array(
+        'label'                 => __( 'Book Item', 'nursoft' ),
+        'description'           => __( 'Custom CPT for listing books and PDFs.', 'nursoft' ),
+        'labels'                => $book_labels,
+        'supports'              => array( 'title', 'editor', 'thumbnail', 'excerpt', 'comments' ),
+        'taxonomies'            => array( 'post_tag' ),
+        'hierarchical'          => false,
+        'public'                => true,
+        'show_ui'               => true,
+        'show_in_menu'          => true,
+        'menu_position'         => 6,
+        'menu_icon'             => 'dashicons-book-alt',
+        'show_in_nav_menus'     => true,
+        'can_export'            => true,
+        'has_archive'           => true,
+        'exclude_from_search'   => false,
+        'publicly_queryable'    => true,
+        'capability_type'       => 'post',
+        'show_in_rest'          => true,
+    );
+    register_post_type( 'book', $book_args );
+
+    // 3. Course CPT (New)
+    $course_labels = array(
+        'name'                  => _x( 'Courses', 'Post Type General Name', 'nursoft' ),
+        'singular_name'         => _x( 'Course Item', 'Post Type Singular Name', 'nursoft' ),
+        'menu_name'             => __( 'Courses', 'nursoft' ),
+        'name_admin_bar'        => __( 'Course', 'nursoft' ),
+        'all_items'             => __( 'All Courses', 'nursoft' ),
+        'add_new_item'          => __( 'Add New Course', 'nursoft' ),
+        'add_new'               => __( 'Add New', 'nursoft' ),
+        'new_item'              => __( 'New Course', 'nursoft' ),
+        'edit_item'             => __( 'Edit Course', 'nursoft' ),
+        'update_item'           => __( 'Update Course', 'nursoft' ),
+        'view_item'             => __( 'View Course', 'nursoft' ),
+        'search_items'          => __( 'Search Courses', 'nursoft' ),
+        'not_found'             => __( 'No courses found', 'nursoft' ),
+        'not_found_in_trash'    => __( 'No courses found in Trash', 'nursoft' ),
+    );
+
+    $course_args = array(
+        'label'                 => __( 'Course Item', 'nursoft' ),
+        'description'           => __( 'Custom CPT for listing video courses and bootcamps.', 'nursoft' ),
+        'labels'                => $course_labels,
+        'supports'              => array( 'title', 'editor', 'thumbnail', 'excerpt', 'comments' ),
+        'taxonomies'            => array( 'post_tag' ),
+        'hierarchical'          => false,
+        'public'                => true,
+        'show_ui'               => true,
+        'show_in_menu'          => true,
+        'menu_position'         => 7,
+        'menu_icon'             => 'dashicons-welcome-learn-more',
+        'show_in_nav_menus'     => true,
+        'can_export'            => true,
+        'has_archive'           => true,
+        'exclude_from_search'   => false,
+        'publicly_queryable'    => true,
+        'capability_type'       => 'post',
+        'show_in_rest'          => true,
+    );
+    register_post_type( 'course', $course_args );
 }
 add_action( 'init', 'nursoft_register_software_cpt', 0 );
 
 /**
- * Register Taxonomies: Platform & Software Category
+ * Register Taxonomies: Platform & Specific Category Taxonomies
  */
 function nursoft_register_taxonomies() {
-    // 1. Platform Taxonomy (Windows, Mac, Android, etc.)
+    // 1. Shared Platform Taxonomy (Windows, Mac, Android, Books, Courses)
     $platform_labels = array(
         'name'              => _x( 'Platforms', 'taxonomy general name', 'nursoft' ),
         'singular_name'     => _x( 'Platform', 'taxonomy singular name', 'nursoft' ),
@@ -156,7 +235,7 @@ function nursoft_register_taxonomies() {
     );
 
     $platform_args = array(
-        'hierarchical'      => true, // behave like category
+        'hierarchical'      => true,
         'labels'            => $platform_labels,
         'show_ui'           => true,
         'show_admin_column' => true,
@@ -164,9 +243,9 @@ function nursoft_register_taxonomies() {
         'rewrite'           => array( 'slug' => 'platform' ),
         'show_in_rest'      => true,
     );
-    register_taxonomy( 'platform', array( 'software' ), $platform_args );
+    register_taxonomy( 'platform', array( 'software', 'book', 'course' ), $platform_args );
 
-    // 2. Software Category Taxonomy (Graphics, Utilities, PDF, etc.)
+    // 2. Software Category Taxonomy (Graphics, Utilities, PDF, etc. - ONLY for software CPT)
     $cat_labels = array(
         'name'              => _x( 'Software Categories', 'taxonomy general name', 'nursoft' ),
         'singular_name'     => _x( 'Software Category', 'taxonomy singular name', 'nursoft' ),
@@ -191,8 +270,70 @@ function nursoft_register_taxonomies() {
         'show_in_rest'      => true,
     );
     register_taxonomy( 'software_cat', array( 'software' ), $cat_args );
+
+    // 3. Book Category Taxonomy (Fiction, Non-Fiction, etc. - ONLY for book CPT)
+    $book_cat_labels = array(
+        'name'              => _x( 'Book Categories', 'taxonomy general name', 'nursoft' ),
+        'singular_name'     => _x( 'Book Category', 'taxonomy singular name', 'nursoft' ),
+        'search_items'      => __( 'Search Book Categories', 'nursoft' ),
+        'all_items'         => __( 'All Book Categories', 'nursoft' ),
+        'parent_item'       => __( 'Parent Book Category', 'nursoft' ),
+        'parent_item_colon' => __( 'Parent Book Category:', 'nursoft' ),
+        'edit_item'         => __( 'Edit Book Category', 'nursoft' ),
+        'update_item'       => __( 'Update Book Category', 'nursoft' ),
+        'add_new_item'      => __( 'Add New Book Category', 'nursoft' ),
+        'new_item_name'     => __( 'New Book Category Name', 'nursoft' ),
+        'menu_name'         => __( 'Book Categories', 'nursoft' ),
+    );
+
+    $book_cat_args = array(
+        'hierarchical'      => true,
+        'labels'            => $book_cat_labels,
+        'show_ui'           => true,
+        'show_admin_column' => true,
+        'query_var'         => true,
+        'rewrite'           => array( 'slug' => 'book-cat' ),
+        'show_in_rest'      => true,
+    );
+    register_taxonomy( 'book_cat', array( 'book' ), $book_cat_args );
+
+    // 4. Course Category Taxonomy (Web Dev, Design, etc. - ONLY for course CPT)
+    $course_cat_labels = array(
+        'name'              => _x( 'Course Categories', 'taxonomy general name', 'nursoft' ),
+        'singular_name'     => _x( 'Course Category', 'taxonomy singular name', 'nursoft' ),
+        'search_items'      => __( 'Search Course Categories', 'nursoft' ),
+        'all_items'         => __( 'All Course Categories', 'nursoft' ),
+        'parent_item'       => __( 'Parent Course Category', 'nursoft' ),
+        'parent_item_colon' => __( 'Parent Course Category:', 'nursoft' ),
+        'edit_item'         => __( 'Edit Course Category', 'nursoft' ),
+        'update_item'       => __( 'Update Course Category', 'nursoft' ),
+        'add_new_item'      => __( 'Add New Course Category', 'nursoft' ),
+        'new_item_name'     => __( 'New Course Category Name', 'nursoft' ),
+        'menu_name'         => __( 'Course Categories', 'nursoft' ),
+    );
+
+    $course_cat_args = array(
+        'hierarchical'      => true,
+        'labels'            => $course_cat_labels,
+        'show_ui'           => true,
+        'show_admin_column' => true,
+        'query_var'         => true,
+        'rewrite'           => array( 'slug' => 'course-cat' ),
+        'show_in_rest'      => true,
+    );
+    register_taxonomy( 'course_cat', array( 'course' ), $course_cat_args );
 }
 add_action( 'init', 'nursoft_register_taxonomies', 0 );
+
+/**
+ * Include all three CPTs in platform taxonomy queries
+ */
+function nursoft_platform_archive_include_cpts( $query ) {
+    if ( ! is_admin() && $query->is_main_query() && is_tax( 'platform' ) ) {
+        $query->set( 'post_type', array( 'software', 'book', 'course' ) );
+    }
+}
+add_action( 'pre_get_posts', 'nursoft_platform_archive_include_cpts' );
 
 /**
  * Auto-initialize Platforms & E-Learning Categories
@@ -217,90 +358,43 @@ function nursoft_auto_init_platforms_and_categories() {
         }
     }
 
-    // 2. Pre-populate parent categories under 'software_cat'
-    $parent_categories = array(
-        'books'   => array(
-            'name'     => 'Books',
-            'platform' => 'books',
-            'subs'     => array(
-                'technology-programming'  => 'Technology & Programming',
-                'business-finance'        => 'Business & Finance',
-                'science-mathematics'     => 'Science & Mathematics',
-                'self-help-development'   => 'Self-Help & Personal Development',
-                'novels-literature'       => 'Novels & Literature',
-                'biography-history'       => 'Biography & History',
-                'health-wellness'         => 'Health & Wellness',
-                'art-graphic-design'      => 'Art & Graphic Design',
-                'kids-education'          => 'Kids & Education',
-                'languages-reference'     => 'Languages & Reference',
-            )
-        ),
-        'courses' => array(
-            'name'     => 'Courses',
-            'platform' => 'courses',
-            'subs'     => array(
-                'web-development'         => 'Web Development',
-                'mobile-app-development'  => 'Mobile App Development',
-                'data-science-ai'         => 'Data Science & AI',
-                'graphic-design-ui-ux'    => 'Graphic Design & UI/UX',
-                'digital-marketing'       => 'Digital Marketing',
-                'python-backend'          => 'Python & Backend',
-                'photography-video'       => 'Photography & Video Editing',
-                'business-entrepreneur'   => 'Business & Entrepreneurship',
-                'language-learning'       => 'Language Learning',
-                'personal-finance'        => 'Personal Finance',
-            )
-        )
+    // 2. Pre-populate Book Categories in 'book_cat'
+    $book_subs = array(
+        'technology-programming'  => 'Technology & Programming',
+        'business-finance'        => 'Business & Finance',
+        'science-mathematics'     => 'Science & Mathematics',
+        'self-help-development'   => 'Self-Help & Personal Development',
+        'novels-literature'       => 'Novels & Literature',
+        'biography-history'       => 'Biography & History',
+        'health-wellness'         => 'Health & Wellness',
+        'art-graphic-design'      => 'Art & Graphic Design',
+        'kids-education'          => 'Kids & Education',
+        'languages-reference'     => 'Languages & Reference',
     );
-
-    foreach ( $parent_categories as $key => $data ) {
-        // Check if parent category exists
-        $parent_term = get_term_by( 'slug', $key, 'software_cat' );
-        $parent_id = 0;
-        
-        if ( ! $parent_term ) {
-            $created_parent = wp_insert_term( $data['name'], 'software_cat', array( 'slug' => $key ) );
-            if ( ! is_wp_error( $created_parent ) ) {
-                $parent_id = $created_parent['term_id'];
-            }
-        } else {
-            $parent_id = $parent_term->term_id;
+    foreach ( $book_subs as $slug => $name ) {
+        $term = get_term_by( 'slug', $slug, 'book_cat' );
+        if ( ! $term ) {
+            wp_insert_term( $name, 'book_cat', array( 'slug' => $slug ) );
         }
+    }
 
-        if ( $parent_id ) {
-            // Associate parent category with its platform
-            if ( isset( $platform_ids[$data['platform']] ) ) {
-                delete_term_meta( $parent_id, '_nursoft_associated_platforms' );
-                add_term_meta( $parent_id, '_nursoft_associated_platforms', $platform_ids[$data['platform']] );
-            }
-
-            // Create subcategories
-            foreach ( $data['subs'] as $sub_slug => $sub_name ) {
-                $sub_term = get_term_by( 'slug', $sub_slug, 'software_cat' );
-                $sub_id = 0;
-                
-                if ( ! $sub_term ) {
-                    $created_sub = wp_insert_term( $sub_name, 'software_cat', array(
-                        'slug'   => $sub_slug,
-                        'parent' => $parent_id,
-                    ) );
-                    if ( ! is_wp_error( $created_sub ) ) {
-                        $sub_id = $created_sub['term_id'];
-                    }
-                } else {
-                    $sub_id = $sub_term->term_id;
-                    // Ensure parent relation is set
-                    if ( intval( $sub_term->parent ) !== intval( $parent_id ) ) {
-                        wp_update_term( $sub_id, 'software_cat', array( 'parent' => $parent_id ) );
-                    }
-                }
-
-                if ( $sub_id && isset( $platform_ids[$data['platform']] ) ) {
-                    // Associate subcategory with its platform
-                    delete_term_meta( $sub_id, '_nursoft_associated_platforms' );
-                    add_term_meta( $sub_id, '_nursoft_associated_platforms', $platform_ids[$data['platform']] );
-                }
-            }
+    // 3. Pre-populate Course Categories in 'course_cat'
+    $course_subs = array(
+        'web-development'         => 'Web Development',
+        'mobile-app-development'  => 'Mobile App Development',
+        'data-science-ai'         => 'Data Science & AI',
+        'graphic-design-ui-ux'    => 'Graphic Design & UI/UX',
+        'digital-marketing'       => 'Digital Marketing',
+        'python-backend'          => 'Python & Backend',
+        'photography-video'       => 'Photography & Video Editing',
+        'business-entrepreneur'   => 'Business & Entrepreneurship',
+        'language-learning'       => 'Language Learning',
+        'personal-finance'        => 'Personal Finance',
+    );
+    foreach ( $course_subs as $slug => $name ) {
+        $term = get_term_by( 'slug', $slug, 'course_cat' );
+        if ( ! $term ) {
+            wp_insert_term( $name, 'course_cat', array( 'slug' => $slug ) );
         }
     }
 }
@@ -935,6 +1029,321 @@ function nursoft_save_software_meta( $post_id ) {
 }
 add_action( 'save_post_software', 'nursoft_save_software_meta' );
 
+/**
+ * 3.1 Book CPT Metabox HTML & Save
+ */
+function nursoft_book_meta_box_html( $post ) {
+    // Get existing values
+    $author       = get_post_meta( $post->ID, '_nursoft_book_author', true );
+    $pages        = get_post_meta( $post->ID, '_nursoft_book_pages', true );
+    $format       = get_post_meta( $post->ID, '_nursoft_book_format', true );
+    $language     = get_post_meta( $post->ID, '_nursoft_book_language', true );
+    
+    $size         = get_post_meta( $post->ID, '_nursoft_size', true );
+    $downloads    = get_post_meta( $post->ID, '_nursoft_downloads', true );
+    $reputation   = get_post_meta( $post->ID, '_nursoft_reputation', true );
+    $badge        = get_post_meta( $post->ID, '_nursoft_badge', true );
+    
+    $direct_url   = get_post_meta( $post->ID, '_nursoft_direct_download_url', true );
+    if ( empty( $direct_url ) ) {
+        $direct_url = get_post_meta( $post->ID, '_nursoft_download_url', true );
+    }
+    $torrent_url  = get_post_meta( $post->ID, '_nursoft_torrent_download_url', true );
+
+    wp_nonce_field( 'nursoft_save_book_meta', 'nursoft_book_meta_nonce' );
+    ?>
+    <div class="nursoft-meta-wrapper" style="padding: 10px 0;">
+        <style>
+            .nursoft-meta-row { display: flex; align-items: center; margin-bottom: 15px; }
+            .nursoft-meta-label { width: 200px; flex-shrink: 0; font-weight: 600; }
+            .nursoft-meta-field { flex-grow: 1; }
+            .nursoft-meta-field input[type="text"], .nursoft-meta-field input[type="url"], .nursoft-meta-field input[type="number"], .nursoft-meta-field select, .nursoft-meta-field textarea { width: 100%; max-width: 500px; padding: 6px; }
+            .nursoft-meta-desc { font-size: 12px; color: #666; margin-top: 4px; }
+        </style>
+
+        <div class="nursoft-meta-row">
+            <div class="nursoft-meta-label"><label for="nursoft_book_author"><?php _e('Book Author', 'nursoft'); ?></label></div>
+            <div class="nursoft-meta-field">
+                <input type="text" id="nursoft_book_author" name="nursoft_book_author" value="<?php echo esc_attr( $author ); ?>" placeholder="e.g. Robert Kiyosaki" />
+            </div>
+        </div>
+
+        <div class="nursoft-meta-row">
+            <div class="nursoft-meta-label"><label for="nursoft_book_pages"><?php _e('Number of Pages', 'nursoft'); ?></label></div>
+            <div class="nursoft-meta-field">
+                <input type="number" id="nursoft_book_pages" name="nursoft_book_pages" value="<?php echo esc_attr( $pages ); ?>" placeholder="e.g. 340" />
+            </div>
+        </div>
+
+        <div class="nursoft-meta-row">
+            <div class="nursoft-meta-label"><label for="nursoft_book_format"><?php _e('Book Format', 'nursoft'); ?></label></div>
+            <div class="nursoft-meta-field">
+                <select id="nursoft_book_format" name="nursoft_book_format">
+                    <option value="PDF" <?php selected( $format, 'PDF' ); ?>>PDF</option>
+                    <option value="EPUB" <?php selected( $format, 'EPUB' ); ?>>EPUB</option>
+                    <option value="MOBI" <?php selected( $format, 'MOBI' ); ?>>MOBI</option>
+                    <option value="TXT" <?php selected( $format, 'TXT' ); ?>>TXT</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="nursoft-meta-row">
+            <div class="nursoft-meta-label"><label for="nursoft_book_language"><?php _e('Language', 'nursoft'); ?></label></div>
+            <div class="nursoft-meta-field">
+                <input type="text" id="nursoft_book_language" name="nursoft_book_language" value="<?php echo esc_attr( $language ); ?>" placeholder="e.g. English, Swahili" />
+            </div>
+        </div>
+
+        <div class="nursoft-meta-row" style="border-top: 1px solid #ddd; padding-top: 15px;">
+            <div class="nursoft-meta-label"><label for="nursoft_size"><?php _e('File Size', 'nursoft'); ?></label></div>
+            <div class="nursoft-meta-field">
+                <input type="text" id="nursoft_size" name="nursoft_size" value="<?php echo esc_attr( $size ); ?>" placeholder="e.g. 12.4 MB" />
+            </div>
+        </div>
+
+        <div class="nursoft-meta-row">
+            <div class="nursoft-meta-label"><label for="nursoft_downloads"><?php _e('Downloads Count', 'nursoft'); ?></label></div>
+            <div class="nursoft-meta-field">
+                <input type="number" id="nursoft_downloads" name="nursoft_downloads" value="<?php echo esc_attr( $downloads ); ?>" />
+            </div>
+        </div>
+
+        <div class="nursoft-meta-row">
+            <div class="nursoft-meta-label"><label for="nursoft_reputation"><?php _e('Reputation / Rating Value (1-5)', 'nursoft'); ?></label></div>
+            <div class="nursoft-meta-field">
+                <input type="text" id="nursoft_reputation" name="nursoft_reputation" value="<?php echo esc_attr( $reputation ); ?>" placeholder="e.g. 4.8" />
+            </div>
+        </div>
+
+        <div class="nursoft-meta-row">
+            <div class="nursoft-meta-label"><label for="nursoft_badge"><?php _e('Reputation Badge', 'nursoft'); ?></label></div>
+            <div class="nursoft-meta-field">
+                <select id="nursoft_badge" name="nursoft_badge">
+                    <option value="" <?php selected( $badge, '' ); ?>><?php _e('None (Normal)', 'nursoft'); ?></option>
+                    <option value="featured" <?php selected( $badge, 'featured' ); ?>><?php _e('Featured (Star)', 'nursoft'); ?></option>
+                    <option value="recommended" <?php selected( $badge, 'recommended' ); ?>><?php _e('Recommended (Heart)', 'nursoft'); ?></option>
+                    <option value="full_version" <?php selected( $badge, 'full_version' ); ?>><?php _e('Premium Pro', 'nursoft'); ?></option>
+                    <option value="free_download" <?php selected( $badge, 'free_download' ); ?>><?php _e('Free Download', 'nursoft'); ?></option>
+                </select>
+            </div>
+        </div>
+
+        <div class="nursoft-meta-row" style="border-top: 1px solid #ddd; padding-top: 15px;">
+            <div class="nursoft-meta-label"><label for="nursoft_direct_download_url"><?php _e('Direct Download URL', 'nursoft'); ?></label></div>
+            <div class="nursoft-meta-field">
+                <input type="url" id="nursoft_direct_download_url" name="nursoft_direct_download_url" value="<?php echo esc_url( $direct_url ); ?>" placeholder="https://..." />
+            </div>
+        </div>
+
+        <div class="nursoft-meta-row">
+            <div class="nursoft-meta-label"><label for="nursoft_torrent_download_url"><?php _e('Torrent / Magnet Link', 'nursoft'); ?></label></div>
+            <div class="nursoft-meta-field">
+                <input type="text" id="nursoft_torrent_download_url" name="nursoft_torrent_download_url" value="<?php echo esc_attr( $torrent_url ); ?>" placeholder="magnet:?xt=..." />
+            </div>
+        </div>
+    </div>
+    <?php
+}
+
+function nursoft_save_book_meta( $post_id ) {
+    if ( ! isset( $_POST['nursoft_book_meta_nonce'] ) ) return;
+    if ( ! wp_verify_nonce( $_POST['nursoft_book_meta_nonce'], 'nursoft_save_book_meta' ) ) return;
+    if ( ! current_user_can( 'edit_post', $post_id ) ) return;
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
+
+    if ( isset( $_POST['nursoft_book_author'] ) ) {
+        update_post_meta( $post_id, '_nursoft_book_author', sanitize_text_field( $_POST['nursoft_book_author'] ) );
+    }
+    if ( isset( $_POST['nursoft_book_pages'] ) ) {
+        update_post_meta( $post_id, '_nursoft_book_pages', intval( $_POST['nursoft_book_pages'] ) );
+    }
+    if ( isset( $_POST['nursoft_book_format'] ) ) {
+        update_post_meta( $post_id, '_nursoft_book_format', sanitize_text_field( $_POST['nursoft_book_format'] ) );
+    }
+    if ( isset( $_POST['nursoft_book_language'] ) ) {
+        update_post_meta( $post_id, '_nursoft_book_language', sanitize_text_field( $_POST['nursoft_book_language'] ) );
+    }
+    if ( isset( $_POST['nursoft_size'] ) ) {
+        update_post_meta( $post_id, '_nursoft_size', sanitize_text_field( $_POST['nursoft_size'] ) );
+    }
+    if ( isset( $_POST['nursoft_downloads'] ) ) {
+        update_post_meta( $post_id, '_nursoft_downloads', intval( $_POST['nursoft_downloads'] ) );
+    }
+    if ( isset( $_POST['nursoft_reputation'] ) ) {
+        update_post_meta( $post_id, '_nursoft_reputation', sanitize_text_field( $_POST['nursoft_reputation'] ) );
+    }
+    if ( isset( $_POST['nursoft_badge'] ) ) {
+        update_post_meta( $post_id, '_nursoft_badge', sanitize_text_field( $_POST['nursoft_badge'] ) );
+    }
+    if ( isset( $_POST['nursoft_direct_download_url'] ) ) {
+        update_post_meta( $post_id, '_nursoft_direct_download_url', esc_url_raw( $_POST['nursoft_direct_download_url'] ) );
+        update_post_meta( $post_id, '_nursoft_download_url', esc_url_raw( $_POST['nursoft_direct_download_url'] ) );
+    }
+    if ( isset( $_POST['nursoft_torrent_download_url'] ) ) {
+        update_post_meta( $post_id, '_nursoft_torrent_download_url', sanitize_text_field( $_POST['nursoft_torrent_download_url'] ) );
+    }
+}
+add_action( 'save_post_book', 'nursoft_save_book_meta' );
+
+/**
+ * 3.2 Course CPT Metabox HTML & Save
+ */
+function nursoft_course_meta_box_html( $post ) {
+    // Get existing values
+    $instructor   = get_post_meta( $post->ID, '_nursoft_course_instructor', true );
+    $duration     = get_post_meta( $post->ID, '_nursoft_course_duration', true );
+    $lessons      = get_post_meta( $post->ID, '_nursoft_course_lessons', true );
+    $level        = get_post_meta( $post->ID, '_nursoft_course_level', true );
+    $language     = get_post_meta( $post->ID, '_nursoft_course_language', true );
+    
+    $size         = get_post_meta( $post->ID, '_nursoft_size', true );
+    $downloads    = get_post_meta( $post->ID, '_nursoft_downloads', true );
+    $reputation   = get_post_meta( $post->ID, '_nursoft_reputation', true );
+    $badge        = get_post_meta( $post->ID, '_nursoft_badge', true );
+    
+    $direct_url   = get_post_meta( $post->ID, '_nursoft_direct_download_url', true );
+    if ( empty( $direct_url ) ) {
+        $direct_url = get_post_meta( $post->ID, '_nursoft_download_url', true );
+    }
+    $torrent_url  = get_post_meta( $post->ID, '_nursoft_torrent_download_url', true );
+
+    wp_nonce_field( 'nursoft_save_course_meta', 'nursoft_course_meta_nonce' );
+    ?>
+    <div class="nursoft-meta-wrapper" style="padding: 10px 0;">
+        <div class="nursoft-meta-row">
+            <div class="nursoft-meta-label"><label for="nursoft_course_instructor"><?php _e('Course Instructor', 'nursoft'); ?></label></div>
+            <div class="nursoft-meta-field">
+                <input type="text" id="nursoft_course_instructor" name="nursoft_course_instructor" value="<?php echo esc_attr( $instructor ); ?>" placeholder="e.g. Dr. Angela Yu" />
+            </div>
+        </div>
+
+        <div class="nursoft-meta-row">
+            <div class="nursoft-meta-label"><label for="nursoft_course_duration"><?php _e('Course Duration', 'nursoft'); ?></label></div>
+            <div class="nursoft-meta-field">
+                <input type="text" id="nursoft_course_duration" name="nursoft_course_duration" value="<?php echo esc_attr( $duration ); ?>" placeholder="e.g. 45 Hours" />
+            </div>
+        </div>
+
+        <div class="nursoft-meta-row">
+            <div class="nursoft-meta-label"><label for="nursoft_course_lessons"><?php _e('Number of Lessons', 'nursoft'); ?></label></div>
+            <div class="nursoft-meta-field">
+                <input type="number" id="nursoft_course_lessons" name="nursoft_course_lessons" value="<?php echo esc_attr( $lessons ); ?>" placeholder="e.g. 120" />
+            </div>
+        </div>
+
+        <div class="nursoft-meta-row">
+            <div class="nursoft-meta-label"><label for="nursoft_course_level"><?php _e('Skill Level', 'nursoft'); ?></label></div>
+            <div class="nursoft-meta-field">
+                <select id="nursoft_course_level" name="nursoft_course_level">
+                    <option value="All Levels" <?php selected( $level, 'All Levels' ); ?>>All Levels</option>
+                    <option value="Beginner" <?php selected( $level, 'Beginner' ); ?>>Beginner</option>
+                    <option value="Intermediate" <?php selected( $level, 'Intermediate' ); ?>>Intermediate</option>
+                    <option value="Advanced" <?php selected( $level, 'Advanced' ); ?>>Advanced</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="nursoft-meta-row">
+            <div class="nursoft-meta-label"><label for="nursoft_course_language"><?php _e('Course Language', 'nursoft'); ?></label></div>
+            <div class="nursoft-meta-field">
+                <input type="text" id="nursoft_course_language" name="nursoft_course_language" value="<?php echo esc_attr( $language ); ?>" placeholder="e.g. English" />
+            </div>
+        </div>
+
+        <div class="nursoft-meta-row" style="border-top: 1px solid #ddd; padding-top: 15px;">
+            <div class="nursoft-meta-label"><label for="nursoft_size"><?php _e('Course File Size', 'nursoft'); ?></label></div>
+            <div class="nursoft-meta-field">
+                <input type="text" id="nursoft_size" name="nursoft_size" value="<?php echo esc_attr( $size ); ?>" placeholder="e.g. 3.2 GB" />
+            </div>
+        </div>
+
+        <div class="nursoft-meta-row">
+            <div class="nursoft-meta-label"><label for="nursoft_downloads"><?php _e('Downloads Count', 'nursoft'); ?></label></div>
+            <div class="nursoft-meta-field">
+                <input type="number" id="nursoft_downloads" name="nursoft_downloads" value="<?php echo esc_attr( $downloads ); ?>" />
+            </div>
+        </div>
+
+        <div class="nursoft-meta-row">
+            <div class="nursoft-meta-label"><label for="nursoft_reputation"><?php _e('Reputation / Rating Value (1-5)', 'nursoft'); ?></label></div>
+            <div class="nursoft-meta-field">
+                <input type="text" id="nursoft_reputation" name="nursoft_reputation" value="<?php echo esc_attr( $reputation ); ?>" placeholder="e.g. 4.9" />
+            </div>
+        </div>
+
+        <div class="nursoft-meta-row">
+            <div class="nursoft-meta-label"><label for="nursoft_badge"><?php _e('Reputation Badge', 'nursoft'); ?></label></div>
+            <div class="nursoft-meta-field">
+                <select id="nursoft_badge" name="nursoft_badge">
+                    <option value="" <?php selected( $badge, '' ); ?>><?php _e('None (Normal)', 'nursoft'); ?></option>
+                    <option value="featured" <?php selected( $badge, 'featured' ); ?>><?php _e('Featured (Star)', 'nursoft'); ?></option>
+                    <option value="recommended" <?php selected( $badge, 'recommended' ); ?>><?php _e('Recommended (Heart)', 'nursoft'); ?></option>
+                    <option value="full_version" <?php selected( $badge, 'full_version' ); ?>><?php _e('Premium Pro', 'nursoft'); ?></option>
+                    <option value="free_download" <?php selected( $badge, 'free_download' ); ?>><?php _e('Free Download', 'nursoft'); ?></option>
+                </select>
+            </div>
+        </div>
+
+        <div class="nursoft-meta-row" style="border-top: 1px solid #ddd; padding-top: 15px;">
+            <div class="nursoft-meta-label"><label for="nursoft_direct_download_url"><?php _e('Direct Download URL', 'nursoft'); ?></label></div>
+            <div class="nursoft-meta-field">
+                <input type="url" id="nursoft_direct_download_url" name="nursoft_direct_download_url" value="<?php echo esc_url( $direct_url ); ?>" placeholder="https://..." />
+            </div>
+        </div>
+
+        <div class="nursoft-meta-row">
+            <div class="nursoft-meta-label"><label for="nursoft_torrent_download_url"><?php _e('Torrent / Magnet Link', 'nursoft'); ?></label></div>
+            <div class="nursoft-meta-field">
+                <input type="text" id="nursoft_torrent_download_url" name="nursoft_torrent_download_url" value="<?php echo esc_attr( $torrent_url ); ?>" placeholder="magnet:?xt=..." />
+            </div>
+        </div>
+    </div>
+    <?php
+}
+
+function nursoft_save_course_meta( $post_id ) {
+    if ( ! isset( $_POST['nursoft_course_meta_nonce'] ) ) return;
+    if ( ! wp_verify_nonce( $_POST['nursoft_course_meta_nonce'], 'nursoft_save_course_meta' ) ) return;
+    if ( ! current_user_can( 'edit_post', $post_id ) ) return;
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
+
+    if ( isset( $_POST['nursoft_course_instructor'] ) ) {
+        update_post_meta( $post_id, '_nursoft_course_instructor', sanitize_text_field( $_POST['nursoft_course_instructor'] ) );
+    }
+    if ( isset( $_POST['nursoft_course_duration'] ) ) {
+        update_post_meta( $post_id, '_nursoft_course_duration', sanitize_text_field( $_POST['nursoft_course_duration'] ) );
+    }
+    if ( isset( $_POST['nursoft_course_lessons'] ) ) {
+        update_post_meta( $post_id, '_nursoft_course_lessons', intval( $_POST['nursoft_course_lessons'] ) );
+    }
+    if ( isset( $_POST['nursoft_course_level'] ) ) {
+        update_post_meta( $post_id, '_nursoft_course_level', sanitize_text_field( $_POST['nursoft_course_level'] ) );
+    }
+    if ( isset( $_POST['nursoft_course_language'] ) ) {
+        update_post_meta( $post_id, '_nursoft_course_language', sanitize_text_field( $_POST['nursoft_course_language'] ) );
+    }
+    if ( isset( $_POST['nursoft_size'] ) ) {
+        update_post_meta( $post_id, '_nursoft_size', sanitize_text_field( $_POST['nursoft_size'] ) );
+    }
+    if ( isset( $_POST['nursoft_downloads'] ) ) {
+        update_post_meta( $post_id, '_nursoft_downloads', intval( $_POST['nursoft_downloads'] ) );
+    }
+    if ( isset( $_POST['nursoft_reputation'] ) ) {
+        update_post_meta( $post_id, '_nursoft_reputation', sanitize_text_field( $_POST['nursoft_reputation'] ) );
+    }
+    if ( isset( $_POST['nursoft_badge'] ) ) {
+        update_post_meta( $post_id, '_nursoft_badge', sanitize_text_field( $_POST['nursoft_badge'] ) );
+    }
+    if ( isset( $_POST['nursoft_direct_download_url'] ) ) {
+        update_post_meta( $post_id, '_nursoft_direct_download_url', esc_url_raw( $_POST['nursoft_direct_download_url'] ) );
+        update_post_meta( $post_id, '_nursoft_download_url', esc_url_raw( $_POST['nursoft_direct_download_url'] ) );
+    }
+    if ( isset( $_POST['nursoft_torrent_download_url'] ) ) {
+        update_post_meta( $post_id, '_nursoft_torrent_download_url', sanitize_text_field( $_POST['nursoft_torrent_download_url'] ) );
+    }
+}
+add_action( 'save_post_course', 'nursoft_save_course_meta' );
+
 /* ==========================================================================
    4. AJAX ACTIONS (LIVE SEARCH & DOWNLOAD INCREMENTOR)
    ========================================================================== */
@@ -952,7 +1361,7 @@ function nursoft_ajax_live_search() {
     }
 
     $args = array(
-        'post_type'      => 'software',
+        'post_type'      => array( 'software', 'book', 'course' ),
         'posts_per_page' => 6,
         's'              => $keyword,
     );
@@ -964,6 +1373,8 @@ function nursoft_ajax_live_search() {
         while ( $query->have_posts() ) {
             $query->the_post();
             
+            $post_type = get_post_type();
+
             // Get post platform
             $platforms = wp_get_post_terms( get_the_ID(), 'platform' );
             $platform_name = '';
@@ -971,9 +1382,26 @@ function nursoft_ajax_live_search() {
                 $platform_name = $platforms[0]->name;
             }
 
-            // Get meta fields
+            // Get meta fields based on CPT
             $size = get_post_meta( get_the_ID(), '_nursoft_size', true );
-            $version = get_post_meta( get_the_ID(), '_nursoft_version', true );
+            $title_suffix = '';
+
+            if ( $post_type === 'book' ) {
+                $author = get_post_meta( get_the_ID(), '_nursoft_book_author', true );
+                if ( $author ) {
+                    $title_suffix = ' (By ' . $author . ')';
+                }
+            } elseif ( $post_type === 'course' ) {
+                $instructor = get_post_meta( get_the_ID(), '_nursoft_course_instructor', true );
+                if ( $instructor ) {
+                    $title_suffix = ' (Course by ' . $instructor . ')';
+                }
+            } else {
+                $version = get_post_meta( get_the_ID(), '_nursoft_version', true );
+                if ( $version ) {
+                    $title_suffix = ' ' . $version;
+                }
+            }
 
             // Thumbnail
             $thumb_url = '';
@@ -985,7 +1413,7 @@ function nursoft_ajax_live_search() {
 
             $results[] = array(
                 'id'       => get_the_ID(),
-                'title'    => get_the_title() . ( $version ? ' ' . $version : '' ),
+                'title'    => get_the_title() . $title_suffix,
                 'url'      => get_permalink(),
                 'thumb'    => $thumb_url,
                 'platform' => $platform_name,
