@@ -4,7 +4,7 @@ Theme URI: https://nursoft.com/
 Author: Mohamed Nurdin Mgaza
 Author URI: mailto:codeoba@gmail.com
 Description: A premium, ultra-modern dark mode WordPress theme modeled after the FileCR software store. Built for high performance, dynamic AJAX search, clean product grids, rich interactive layouts, and premium Light/Dark mode switching. Built by Mohamed Nurdin Mgaza from Tanzania.
-Version: 1.9.5
+Version: 1.9.8
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: nursoft
@@ -3139,6 +3139,23 @@ html[data-theme="light"] .nursoft-pagination span.current {
     background: var(--accent-blue);
     border-color: var(--accent-blue);
     color: #ffffff;
+}
+
+/* Related Swiper Slider Responsive Styles */
+@media (max-width: 992px) {
+    .rel-slide-card {
+        flex: 0 0 calc(50% - 8px) !important; /* 2 Cards visible on tablet */
+    }
+}
+
+@media (max-width: 576px) {
+    .rel-slide-card {
+        flex: 0 0 100% !important; /* 1 Card visible on phone */
+        min-width: 220px !important;
+    }
+    .nursoft-related-section {
+        padding: 16px !important;
+    }
 }
 
 

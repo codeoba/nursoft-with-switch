@@ -778,6 +778,165 @@ get_header(); ?>
                 }
                 </script>
 
+                <!-- Premium Related Software touch-friendly Swiper/Slider (Moved from sidebar) -->
+                <?php
+                $cat_ids = array();
+                if ( ! empty( $categories ) && ! is_wp_error( $categories ) ) {
+                    foreach ( $categories as $cat ) {
+                        $cat_ids[] = $cat->term_id;
+                    }
+                }
+
+                $rel_args = array(
+                    'post_type'      => 'software',
+                    'posts_per_page' => 8, // Increase to 8 for rich slider experience
+                    'post__not_in'   => array( get_the_ID() ),
+                    'tax_query'      => array(
+                        'relation' => 'OR',
+                        array(
+                            'taxonomy' => 'software_cat',
+                            'field'    => 'term_id',
+                            'terms'    => $cat_ids,
+                        ),
+                    ),
+                );
+                $rel_query = new WP_Query( $rel_args );
+
+                if ( $rel_query->have_posts() ) :
+                ?>
+                <section class="nursoft-related-section" style="background:var(--bg-surface); border:1px solid var(--border-color); border-radius:16px; padding:24px; margin-bottom:25px; box-shadow:var(--shadow-card); overflow:hidden;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+                        <h5 class="soft_section_title" style="margin:0; display:flex; align-items:center; gap:8px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width:18px; height:18px; color:var(--accent-blue);"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
+                            <span><?php _e('You May Also Like', 'nursoft'); ?></span>
+                        </h5>
+                        <div style="display:flex; gap:8px;">
+                            <button id="rel-prev-btn" class="rel-slider-nav" style="background:var(--bg-element); border:1px solid var(--border-color); color:var(--text-primary); width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; transition:all 0.2s;">&lt;</button>
+                            <button id="rel-next-btn" class="rel-slider-nav" style="background:var(--bg-element); border:1px solid var(--border-color); color:var(--text-primary); width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; transition:all 0.2s;">&gt;</button>
+                        </div>
+                    </div>
+
+                    <!-- Touch slider viewport -->
+                    <div class="rel-slider-viewport" style="overflow:hidden; width:100%; cursor:grab;">
+                        <div class="rel-slider-track" id="rel-slider-track" style="display:flex; gap:16px; transition:transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); will-change:transform;">
+                            <?php
+                            while ( $rel_query->have_posts() ) : $rel_query->the_post();
+                                $rel_id = get_the_ID();
+                                $rel_version = get_post_meta( $rel_id, '_nursoft_version', true );
+                                $rel_size    = get_post_meta( $rel_id, '_nursoft_size', true );
+                                $rel_reputation = get_post_meta( $rel_id, '_nursoft_reputation', true );
+                                $rel_reputation_val = $rel_reputation !== '' ? floatval($rel_reputation) : 4.5;
+                                $rel_plats   = wp_get_post_terms( $rel_id, 'platform' );
+                                $rel_plat_name = ! empty( $rel_plats ) ? $rel_plats[0]->name : 'Windows';
+                                $rel_plat_slug = ! empty( $rel_plats ) ? $rel_plats[0]->slug : 'ms-windows';
+                                ?>
+                                <div class="rel-slide-card" style="flex: 0 0 calc(33.333% - 11px); min-width: 180px; background:var(--bg-element); border:1px solid var(--border-color); border-radius:12px; padding:14px; display:flex; flex-direction:column; gap:10px; transition:border-color var(--transition-fast), transform var(--transition-fast);" onmouseover="this.style.borderColor='var(--accent-blue)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border-color)'; this.style.transform='translateY(0)'">
+                                    <div style="display:flex; gap:10px; align-items:center;">
+                                        <a href="<?php the_permalink(); ?>" style="width:44px; height:44px; border-radius:8px; overflow:hidden; flex-shrink:0; background:var(--bg-surface); border:1px solid var(--border-color); display:flex; align-items:center; justify-content:center;">
+                                            <?php if ( has_post_thumbnail() ) : ?>
+                                                <?php the_post_thumbnail( 'thumbnail' ); ?>
+                                            <?php else : ?>
+                                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/default-logo.png" alt="logo" style="width:100%; height:100%; object-fit:contain;" />
+                                            <?php endif; ?>
+                                        </a>
+                                        <div style="flex-grow:1; min-width:0;">
+                                            <a href="<?php the_permalink(); ?>" style="font-weight:700; font-size:12.5px; color:var(--text-primary); display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-decoration:none;" title="<?php the_title_attribute(); ?>">
+                                                <?php the_title(); ?>
+                                            </a>
+                                            <div style="font-size:10px; font-weight:700; color:var(--accent-blue); text-transform:uppercase; margin-top:2px;">
+                                                <?php echo esc_html($rel_plat_name); ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="border-top:1px solid var(--border-color); padding-top:8px; display:flex; justify-content:space-between; align-items:center; font-size:11px; color:var(--text-muted); margin-top:auto;">
+                                        <span style="font-weight:600; color:var(--text-secondary); background:var(--bg-surface); border:1px solid var(--border-color); padding:1px 6px; border-radius:4px;"><?php echo esc_html($rel_size); ?></span>
+                                        <span style="color:var(--accent-yellow); font-size:9.5px; font-weight:700;">★ <?php echo number_format($rel_reputation_val, 1); ?></span>
+                                    </div>
+                                </div>
+                            <?php
+                            endwhile;
+                            wp_reset_postdata();
+                            ?>
+                        </div>
+                    </div>
+                </section>
+
+                <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const track = document.getElementById('rel-slider-track');
+                    const nextBtn = document.getElementById('rel-next-btn');
+                    const prevBtn = document.getElementById('rel-prev-btn');
+                    if (!track) return;
+
+                    let scrollAmount = 0;
+                    const card = track.querySelector('.rel-slide-card');
+                    if (!card) return;
+
+                    function getSlideWidth() {
+                        return card.getBoundingClientRect().width + 16; // width + gap
+                    }
+
+                    nextBtn.addEventListener('click', function() {
+                        const slideWidth = getSlideWidth();
+                        const maxScroll = track.scrollWidth - track.parentElement.clientWidth;
+                        scrollAmount = Math.min(scrollAmount + slideWidth, maxScroll);
+                        track.style.transform = `translateX(-${scrollAmount}px)`;
+                    });
+
+                    prevBtn.addEventListener('click', function() {
+                        const slideWidth = getSlideWidth();
+                        scrollAmount = Math.max(scrollAmount - slideWidth, 0);
+                        track.style.transform = `translateX(-${scrollAmount}px)`;
+                    });
+
+                    // Touch Swiping logic for Mobile Devices
+                    let isDragging = false;
+                    let startX = 0;
+                    let currentTranslate = 0;
+                    let prevTranslate = 0;
+
+                    track.addEventListener('touchstart', dragStart);
+                    track.addEventListener('touchend', dragEnd);
+                    track.addEventListener('touchmove', dragAction);
+
+                    track.addEventListener('mousedown', dragStart);
+                    track.addEventListener('mouseup', dragEnd);
+                    track.addEventListener('mouseleave', dragEnd);
+                    track.addEventListener('mousemove', dragAction);
+
+                    function dragStart(e) {
+                        isDragging = true;
+                        startX = getPositionX(e);
+                        track.style.cursor = 'grabbing';
+                    }
+
+                    function dragAction(e) {
+                        if (!isDragging) return;
+                        const currentX = getPositionX(e);
+                        const diff = currentX - startX;
+                        currentTranslate = prevTranslate + diff;
+                        // Constraints
+                        const maxScroll = -(track.scrollWidth - track.parentElement.clientWidth);
+                        if (currentTranslate > 0) currentTranslate = 0;
+                        if (currentTranslate < maxScroll) currentTranslate = maxScroll;
+
+                        track.style.transform = `translateX(${currentTranslate}px)`;
+                    }
+
+                    function dragEnd() {
+                        isDragging = false;
+                        prevTranslate = currentTranslate;
+                        scrollAmount = -currentTranslate;
+                        track.style.cursor = 'grab';
+                    }
+
+                    function getPositionX(e) {
+                        return e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
+                    }
+                });
+                </script>
+                <?php endif; ?>
+
                 <!-- Premium Comment Section -->
                 <?php
                 if ( comments_open() || get_comments_number() ) :
@@ -790,68 +949,7 @@ get_header(); ?>
             <!-- 2. Right / Sidebar Column -->
             <aside class="software_sidebar_col">
                 
-                <!-- Related Software Widget -->
-                <div class="widget_box">
-                    <h5 class="widget_title"><?php _e('Related Software', 'nursoft'); ?></h5>
-                    <div class="widget_list">
-                        <?php
-                        // Query related products in same category
-                        $cat_ids = array();
-                        if ( ! empty( $categories ) && ! is_wp_error( $categories ) ) {
-                            foreach ( $categories as $cat ) {
-                                $cat_ids[] = $cat->term_id;
-                            }
-                        }
 
-                        $rel_args = array(
-                            'post_type'      => 'software',
-                            'posts_per_page' => 4,
-                            'post__not_in'   => array( get_the_ID() ),
-                            'tax_query'      => array(
-                                'relation' => 'OR',
-                                array(
-                                    'taxonomy' => 'software_cat',
-                                    'field'    => 'term_id',
-                                    'terms'    => $cat_ids,
-                                ),
-                            ),
-                        );
-                        $rel_query = new WP_Query( $rel_args );
-
-                        if ( $rel_query->have_posts() ) :
-                            while ( $rel_query->have_posts() ) : $rel_query->the_post();
-                                $rel_version = get_post_meta( get_the_ID(), '_nursoft_version', true );
-                                $rel_size    = get_post_meta( get_the_ID(), '_nursoft_size', true );
-                                $rel_plats   = wp_get_post_terms( get_the_ID(), 'platform' );
-                                $rel_plat_name = ! empty( $rel_plats ) ? $rel_plats[0]->name : 'Windows';
-                                ?>
-                                <div class="widget_item">
-                                    <a href="<?php the_permalink(); ?>" class="widget_thumb">
-                                        <?php if ( has_post_thumbnail() ) : ?>
-                                            <?php the_post_thumbnail( 'thumbnail' ); ?>
-                                        <?php else : ?>
-                                            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/default-logo.png" alt="logo" />
-                                        <?php endif; ?>
-                                    </a>
-                                    <div class="widget_item_info">
-                                        <a class="widget_item_title" href="<?php the_permalink(); ?>">
-                                            <?php the_title(); ?><?php if($rel_version) echo ' ' . esc_html($rel_version); ?>
-                                        </a>
-                                        <div class="widget_item_meta">
-                                            <span style="color:var(--accent-blue); text-transform: capitalize;"><?php echo esc_html($rel_plat_name); ?></span>
-                                            <span><?php echo esc_html($rel_size); ?></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php
-                            endwhile;
-                            wp_reset_postdata();
-                        else :
-                            echo '<p style="font-size:13px; color:var(--text-secondary);">' . __('No related software found.', 'nursoft') . '</p>';
-                        endif;
-                        ?>
-                    </div>
-                </div>
 
                 <!-- Popular Downloads Widget -->
                 <div class="widget_box">
