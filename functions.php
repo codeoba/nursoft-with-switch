@@ -134,84 +134,88 @@ function nursoft_register_software_cpt() {
     register_post_type( 'software', $software_args );
 
     // 2. Book CPT (New)
-    $book_labels = array(
-        'name'                  => _x( 'Books', 'Post Type General Name', 'nursoft' ),
-        'singular_name'         => _x( 'Book Item', 'Post Type Singular Name', 'nursoft' ),
-        'menu_name'             => __( 'Books', 'nursoft' ),
-        'name_admin_bar'        => __( 'Book', 'nursoft' ),
-        'all_items'             => __( 'All Books', 'nursoft' ),
-        'add_new_item'          => __( 'Add New Book', 'nursoft' ),
-        'add_new'               => __( 'Add New', 'nursoft' ),
-        'new_item'              => __( 'New Book', 'nursoft' ),
-        'edit_item'             => __( 'Edit Book', 'nursoft' ),
-        'update_item'           => __( 'Update Book', 'nursoft' ),
-        'view_item'             => __( 'View Book', 'nursoft' ),
-        'search_items'          => __( 'Search Books', 'nursoft' ),
-        'not_found'             => __( 'No books found', 'nursoft' ),
-        'not_found_in_trash'    => __( 'No books found in Trash', 'nursoft' ),
-    );
+    if ( get_theme_mod( 'nursoft_enable_books', '1' ) === '1' ) {
+        $book_labels = array(
+            'name'                  => _x( 'Books', 'Post Type General Name', 'nursoft' ),
+            'singular_name'         => _x( 'Book Item', 'Post Type Singular Name', 'nursoft' ),
+            'menu_name'             => __( 'Books', 'nursoft' ),
+            'name_admin_bar'        => __( 'Book', 'nursoft' ),
+            'all_items'             => __( 'All Books', 'nursoft' ),
+            'add_new_item'          => __( 'Add New Book', 'nursoft' ),
+            'add_new'               => __( 'Add New', 'nursoft' ),
+            'new_item'              => __( 'New Book', 'nursoft' ),
+            'edit_item'             => __( 'Edit Book', 'nursoft' ),
+            'update_item'           => __( 'Update Book', 'nursoft' ),
+            'view_item'             => __( 'View Book', 'nursoft' ),
+            'search_items'          => __( 'Search Books', 'nursoft' ),
+            'not_found'             => __( 'No books found', 'nursoft' ),
+            'not_found_in_trash'    => __( 'No books found in Trash', 'nursoft' ),
+        );
 
-    $book_args = array(
-        'label'                 => __( 'Book Item', 'nursoft' ),
-        'description'           => __( 'Custom CPT for listing books and PDFs.', 'nursoft' ),
-        'labels'                => $book_labels,
-        'supports'              => array( 'title', 'editor', 'thumbnail', 'excerpt', 'comments' ),
-        'taxonomies'            => array( 'post_tag' ),
-        'hierarchical'          => false,
-        'public'                => true,
-        'show_ui'               => true,
-        'show_in_menu'          => true,
-        'menu_position'         => 6,
-        'menu_icon'             => 'dashicons-book-alt',
-        'show_in_nav_menus'     => true,
-        'can_export'            => true,
-        'has_archive'           => true,
-        'exclude_from_search'   => false,
-        'publicly_queryable'    => true,
-        'capability_type'       => 'post',
-        'show_in_rest'          => true,
-    );
-    register_post_type( 'book', $book_args );
+        $book_args = array(
+            'label'                 => __( 'Book Item', 'nursoft' ),
+            'description'           => __( 'Custom CPT for listing books and PDFs.', 'nursoft' ),
+            'labels'                => $book_labels,
+            'supports'              => array( 'title', 'editor', 'thumbnail', 'excerpt', 'comments' ),
+            'taxonomies'            => array( 'post_tag' ),
+            'hierarchical'          => false,
+            'public'                => true,
+            'show_ui'               => true,
+            'show_in_menu'          => true,
+            'menu_position'         => 6,
+            'menu_icon'             => 'dashicons-book-alt',
+            'show_in_nav_menus'     => true,
+            'can_export'            => true,
+            'has_archive'           => true,
+            'exclude_from_search'   => false,
+            'publicly_queryable'    => true,
+            'capability_type'       => 'post',
+            'show_in_rest'          => true,
+        );
+        register_post_type( 'book', $book_args );
+    }
 
     // 3. Course CPT (New)
-    $course_labels = array(
-        'name'                  => _x( 'Courses', 'Post Type General Name', 'nursoft' ),
-        'singular_name'         => _x( 'Course Item', 'Post Type Singular Name', 'nursoft' ),
-        'menu_name'             => __( 'Courses', 'nursoft' ),
-        'name_admin_bar'        => __( 'Course', 'nursoft' ),
-        'all_items'             => __( 'All Courses', 'nursoft' ),
-        'add_new_item'          => __( 'Add New Course', 'nursoft' ),
-        'add_new'               => __( 'Add New', 'nursoft' ),
-        'new_item'              => __( 'New Course', 'nursoft' ),
-        'edit_item'             => __( 'Edit Course', 'nursoft' ),
-        'update_item'           => __( 'Update Course', 'nursoft' ),
-        'view_item'             => __( 'View Course', 'nursoft' ),
-        'search_items'          => __( 'Search Courses', 'nursoft' ),
-        'not_found'             => __( 'No courses found', 'nursoft' ),
-        'not_found_in_trash'    => __( 'No courses found in Trash', 'nursoft' ),
-    );
+    if ( get_theme_mod( 'nursoft_enable_courses', '1' ) === '1' ) {
+        $course_labels = array(
+            'name'                  => _x( 'Courses', 'Post Type General Name', 'nursoft' ),
+            'singular_name'         => _x( 'Course Item', 'Post Type Singular Name', 'nursoft' ),
+            'menu_name'             => __( 'Courses', 'nursoft' ),
+            'name_admin_bar'        => __( 'Course', 'nursoft' ),
+            'all_items'             => __( 'All Courses', 'nursoft' ),
+            'add_new_item'          => __( 'Add New Course', 'nursoft' ),
+            'add_new'               => __( 'Add New', 'nursoft' ),
+            'new_item'              => __( 'New Course', 'nursoft' ),
+            'edit_item'             => __( 'Edit Course', 'nursoft' ),
+            'update_item'           => __( 'Update Course', 'nursoft' ),
+            'view_item'             => __( 'View Course', 'nursoft' ),
+            'search_items'          => __( 'Search Courses', 'nursoft' ),
+            'not_found'             => __( 'No courses found', 'nursoft' ),
+            'not_found_in_trash'    => __( 'No courses found in Trash', 'nursoft' ),
+        );
 
-    $course_args = array(
-        'label'                 => __( 'Course Item', 'nursoft' ),
-        'description'           => __( 'Custom CPT for listing video courses and bootcamps.', 'nursoft' ),
-        'labels'                => $course_labels,
-        'supports'              => array( 'title', 'editor', 'thumbnail', 'excerpt', 'comments' ),
-        'taxonomies'            => array( 'post_tag' ),
-        'hierarchical'          => false,
-        'public'                => true,
-        'show_ui'               => true,
-        'show_in_menu'          => true,
-        'menu_position'         => 7,
-        'menu_icon'             => 'dashicons-welcome-learn-more',
-        'show_in_nav_menus'     => true,
-        'can_export'            => true,
-        'has_archive'           => true,
-        'exclude_from_search'   => false,
-        'publicly_queryable'    => true,
-        'capability_type'       => 'post',
-        'show_in_rest'          => true,
-    );
-    register_post_type( 'course', $course_args );
+        $course_args = array(
+            'label'                 => __( 'Course Item', 'nursoft' ),
+            'description'           => __( 'Custom CPT for listing video courses and bootcamps.', 'nursoft' ),
+            'labels'                => $course_labels,
+            'supports'              => array( 'title', 'editor', 'thumbnail', 'excerpt', 'comments' ),
+            'taxonomies'            => array( 'post_tag' ),
+            'hierarchical'          => false,
+            'public'                => true,
+            'show_ui'               => true,
+            'show_in_menu'          => true,
+            'menu_position'         => 7,
+            'menu_icon'             => 'dashicons-welcome-learn-more',
+            'show_in_nav_menus'     => true,
+            'can_export'            => true,
+            'has_archive'           => true,
+            'exclude_from_search'   => false,
+            'publicly_queryable'    => true,
+            'capability_type'       => 'post',
+            'show_in_rest'          => true,
+        );
+        register_post_type( 'course', $course_args );
+    }
 }
 add_action( 'init', 'nursoft_register_software_cpt', 0 );
 
@@ -272,56 +276,60 @@ function nursoft_register_taxonomies() {
     register_taxonomy( 'software_cat', array( 'software' ), $cat_args );
 
     // 3. Book Category Taxonomy (Fiction, Non-Fiction, etc. - ONLY for book CPT)
-    $book_cat_labels = array(
-        'name'              => _x( 'Book Categories', 'taxonomy general name', 'nursoft' ),
-        'singular_name'     => _x( 'Book Category', 'taxonomy singular name', 'nursoft' ),
-        'search_items'      => __( 'Search Book Categories', 'nursoft' ),
-        'all_items'         => __( 'All Book Categories', 'nursoft' ),
-        'parent_item'       => __( 'Parent Book Category', 'nursoft' ),
-        'parent_item_colon' => __( 'Parent Book Category:', 'nursoft' ),
-        'edit_item'         => __( 'Edit Book Category', 'nursoft' ),
-        'update_item'       => __( 'Update Book Category', 'nursoft' ),
-        'add_new_item'      => __( 'Add New Book Category', 'nursoft' ),
-        'new_item_name'     => __( 'New Book Category Name', 'nursoft' ),
-        'menu_name'         => __( 'Book Categories', 'nursoft' ),
-    );
+    if ( get_theme_mod( 'nursoft_enable_books', '1' ) === '1' ) {
+        $book_cat_labels = array(
+            'name'              => _x( 'Book Categories', 'taxonomy general name', 'nursoft' ),
+            'singular_name'     => _x( 'Book Category', 'taxonomy singular name', 'nursoft' ),
+            'search_items'      => __( 'Search Book Categories', 'nursoft' ),
+            'all_items'         => __( 'All Book Categories', 'nursoft' ),
+            'parent_item'       => __( 'Parent Book Category', 'nursoft' ),
+            'parent_item_colon' => __( 'Parent Book Category:', 'nursoft' ),
+            'edit_item'         => __( 'Edit Book Category', 'nursoft' ),
+            'update_item'       => __( 'Update Book Category', 'nursoft' ),
+            'add_new_item'      => __( 'Add New Book Category', 'nursoft' ),
+            'new_item_name'     => __( 'New Book Category Name', 'nursoft' ),
+            'menu_name'         => __( 'Book Categories', 'nursoft' ),
+        );
 
-    $book_cat_args = array(
-        'hierarchical'      => true,
-        'labels'            => $book_cat_labels,
-        'show_ui'           => true,
-        'show_admin_column' => true,
-        'query_var'         => true,
-        'rewrite'           => array( 'slug' => 'book-cat' ),
-        'show_in_rest'      => true,
-    );
-    register_taxonomy( 'book_cat', array( 'book' ), $book_cat_args );
+        $book_cat_args = array(
+            'hierarchical'      => true,
+            'labels'            => $book_cat_labels,
+            'show_ui'           => true,
+            'show_admin_column' => true,
+            'query_var'         => true,
+            'rewrite'           => array( 'slug' => 'book-cat' ),
+            'show_in_rest'      => true,
+        );
+        register_taxonomy( 'book_cat', array( 'book' ), $book_cat_args );
+    }
 
     // 4. Course Category Taxonomy (Web Dev, Design, etc. - ONLY for course CPT)
-    $course_cat_labels = array(
-        'name'              => _x( 'Course Categories', 'taxonomy general name', 'nursoft' ),
-        'singular_name'     => _x( 'Course Category', 'taxonomy singular name', 'nursoft' ),
-        'search_items'      => __( 'Search Course Categories', 'nursoft' ),
-        'all_items'         => __( 'All Course Categories', 'nursoft' ),
-        'parent_item'       => __( 'Parent Course Category', 'nursoft' ),
-        'parent_item_colon' => __( 'Parent Course Category:', 'nursoft' ),
-        'edit_item'         => __( 'Edit Course Category', 'nursoft' ),
-        'update_item'       => __( 'Update Course Category', 'nursoft' ),
-        'add_new_item'      => __( 'Add New Course Category', 'nursoft' ),
-        'new_item_name'     => __( 'New Course Category Name', 'nursoft' ),
-        'menu_name'         => __( 'Course Categories', 'nursoft' ),
-    );
+    if ( get_theme_mod( 'nursoft_enable_courses', '1' ) === '1' ) {
+        $course_cat_labels = array(
+            'name'              => _x( 'Course Categories', 'taxonomy general name', 'nursoft' ),
+            'singular_name'     => _x( 'Course Category', 'taxonomy singular name', 'nursoft' ),
+            'search_items'      => __( 'Search Course Categories', 'nursoft' ),
+            'all_items'         => __( 'All Course Categories', 'nursoft' ),
+            'parent_item'       => __( 'Parent Course Category', 'nursoft' ),
+            'parent_item_colon' => __( 'Parent Course Category:', 'nursoft' ),
+            'edit_item'         => __( 'Edit Course Category', 'nursoft' ),
+            'update_item'       => __( 'Update Course Category', 'nursoft' ),
+            'add_new_item'      => __( 'Add New Course Category', 'nursoft' ),
+            'new_item_name'     => __( 'New Course Category Name', 'nursoft' ),
+            'menu_name'         => __( 'Course Categories', 'nursoft' ),
+        );
 
-    $course_cat_args = array(
-        'hierarchical'      => true,
-        'labels'            => $course_cat_labels,
-        'show_ui'           => true,
-        'show_admin_column' => true,
-        'query_var'         => true,
-        'rewrite'           => array( 'slug' => 'course-cat' ),
-        'show_in_rest'      => true,
-    );
-    register_taxonomy( 'course_cat', array( 'course' ), $course_cat_args );
+        $course_cat_args = array(
+            'hierarchical'      => true,
+            'labels'            => $course_cat_labels,
+            'show_ui'           => true,
+            'show_admin_column' => true,
+            'query_var'         => true,
+            'rewrite'           => array( 'slug' => 'course-cat' ),
+            'show_in_rest'      => true,
+        );
+        register_taxonomy( 'course_cat', array( 'course' ), $course_cat_args );
+    }
 }
 add_action( 'init', 'nursoft_register_taxonomies', 0 );
 
@@ -2170,8 +2178,45 @@ function nursoft_customize_register( $wp_customize ) {
         'section'  => 'nursoft_ads_section',
         'type'     => 'textarea',
     ) );
+
+    // 3. Module Control Section
+    $wp_customize->add_section( 'nursoft_modules_section', array(
+        'title'       => __( 'Theme Modules (ON/OFF)', 'nursoft' ),
+        'priority'    => 25,
+        'description' => __( 'Enable or disable major modules of the theme. Disabling a module automatically unregisters its post type, taxonomy, metaboxes, and removes its menu buttons.', 'nursoft' ),
+    ) );
+
+    // Enable/Disable E-Books Module
+    $wp_customize->add_setting( 'nursoft_enable_books', array(
+        'default'           => '1',
+        'sanitize_callback' => 'nursoft_sanitize_checkbox',
+    ) );
+    $wp_customize->add_control( 'nursoft_enable_books', array(
+        'label'    => __( 'Enable E-Books Module', 'nursoft' ),
+        'section'  => 'nursoft_modules_section',
+        'type'     => 'checkbox',
+    ) );
+
+    // Enable/Disable Video Courses Module
+    $wp_customize->add_setting( 'nursoft_enable_courses', array(
+        'default'           => '1',
+        'sanitize_callback' => 'nursoft_sanitize_checkbox',
+    ) );
+    $wp_customize->add_control( 'nursoft_enable_courses', array(
+        'label'    => __( 'Enable Video Courses Module', 'nursoft' ),
+        'section'  => 'nursoft_modules_section',
+        'type'     => 'checkbox',
+    ) );
 }
 add_action( 'customize_register', 'nursoft_customize_register' );
+
+/**
+ * Sanitization helper for custom checkboxes
+ */
+function nursoft_sanitize_checkbox( $checked ) {
+    return ( ( isset( $checked ) && true === $checked ) ? '1' : '0' );
+}
+
 
 /**
  * Sanitization helper for custom script/ad codes
