@@ -4,7 +4,7 @@
  *
  * @author  Mohamed Nurdin Mgaza <codeoba@gmail.com>
  * @country Tanzania | +687001775
- * @version 1.6.0
+ * @version 1.7.0
  * @package Nursoft
  */
 ?>
@@ -27,7 +27,7 @@
                 <span><?php _e('Latest', 'nursoft'); ?></span>
             </button>
             <button class="sidebar_tab_btn" onclick="nursoftSwitchTab(event, 'tab-popular')">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19.48 12.35c-1.57-4.08-7.16-6.04-7.16-6.04s.35 2.35-1.08 4.29c-1.39 1.9-3.4 3.25-3.4 5.83 0 3.7 3.1 6.7 6.8 6.7 3.7 0 6.8-3 6.8-6.7 0-1.5-.4-2.85-1.96-4.08zM14.6 20.4c-.9 1.1-2.4 1.4-3.5.7-1.1-.6-1.5-2-1-3.1.5-1 1.6-1.6 1.6-1.6s0 1.2.7 1.8c.7.6 1.7.3 2.1-.4.4-.7.1-1.7-.5-2.2-.6-.5-1.5-1.1-1.5-1.1s2.2.4 3.3 2.5c1.1 2 0 4.1-.7 4.9L14.6 20.4z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19.48 12.35c-1.57-4.08-7.16-6.04-7.16-6.04s.35 2.35-1.08 4.29c-1.39 1.9-3.4 3.25-3.4 5.83 0 3.7 3.1 6.7 6.8 6.7 3.7 0 6.8-3 6.8-6.7 0-1.5-.4-2.85-1.96-4.08zM14.6 20.4c-.9 1.1-2.4 1.4-3.5.7-1.1-.6-1.5-2-1-3.1.5-1 1.6-1.6 1.6-1.7.0 1.2.7 1.8c.7.6 1.7.3 2.1-.4.4-.7.1-1.7-.5-2.2-.6-.5-1.5-1.1-1.5-1.1s2.2.4 3.3 2.5c1.1 2 0 4.1-.7 4.9L14.6 20.4z"/></svg>
                 <span><?php _e('Popular', 'nursoft'); ?></span>
             </button>
             <button class="sidebar_tab_btn" onclick="nursoftSwitchTab(event, 'tab-comments')">

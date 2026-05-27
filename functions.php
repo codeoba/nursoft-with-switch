@@ -6,7 +6,7 @@
  * @email   codeoba@gmail.com
  * @phone   +687001775
  * @country Tanzania
- * @version 1.6.0
+ * @version 1.7.0
  * @link    https://developer.wordpress.org/themes/basics/theme-functions/
  * @package Nursoft
  */
@@ -65,23 +65,23 @@ function nursoft_scripts() {
     wp_enqueue_style( 'nursoft-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap', array(), null );
 
     // Theme main stylesheet
-    wp_enqueue_style( 'nursoft-style', get_stylesheet_uri(), array( 'nursoft-fonts' ), '1.6.0' );
+    wp_enqueue_style( 'nursoft-style', get_stylesheet_uri(), array( 'nursoft-fonts' ), '1.7.0' );
 
     // Enqueue Live Search JS
-    wp_enqueue_script( 'nursoft-live-search', get_template_directory_uri() . '/assets/js/live-search.js', array(), '1.6.0', true );
+    wp_enqueue_script( 'nursoft-live-search', get_template_directory_uri() . '/assets/js/live-search.js', array(), '1.7.0', true );
     wp_localize_script( 'nursoft-live-search', 'nursoftLiveSearch', array(
         'ajaxurl' => admin_url( 'admin-ajax.php' ),
         'nonce'   => wp_create_nonce( 'nursoft-search-nonce' )
     ) );
 
     // Enqueue Download Handler JS
-    wp_enqueue_script( 'nursoft-download-handler', get_template_directory_uri() . '/assets/js/download-handler.js', array(), '1.6.0', true );
+    wp_enqueue_script( 'nursoft-download-handler', get_template_directory_uri() . '/assets/js/download-handler.js', array(), '1.7.0', true );
     wp_localize_script( 'nursoft-download-handler', 'nursoftDownload', array(
         'ajaxurl' => admin_url( 'admin-ajax.php' )
     ) );
 
     // Enqueue Quick View JS
-    wp_enqueue_script( 'nursoft-quick-view', get_template_directory_uri() . '/assets/js/quick-view.js', array(), '1.6.0', true );
+    wp_enqueue_script( 'nursoft-quick-view', get_template_directory_uri() . '/assets/js/quick-view.js', array(), '1.7.0', true );
     wp_localize_script( 'nursoft-quick-view', 'nursoftQuickView', array(
         'ajaxurl' => admin_url( 'admin-ajax.php' ),
         'nonce'   => wp_create_nonce( 'nursoft-quickview-nonce' )
@@ -2282,7 +2282,7 @@ add_filter( 'the_content', 'nursoft_inject_content_ads' );
  */
 function nursoft_dynamic_seo_engine() {
     // 1. Robots, Canonical & Core Meta tags
-    echo "\n<!-- Nursoft Premium SEO Engine (v1.6.0) -->\n";
+    echo "\n<!-- Nursoft Premium SEO Engine (v1.7.0) -->\n";
     
     $canonical_url = esc_url( home_url( $_SERVER['REQUEST_URI'] ) );
     echo '<link rel="canonical" href="' . $canonical_url . '" />' . "\n";
