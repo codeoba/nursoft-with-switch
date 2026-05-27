@@ -2544,6 +2544,7 @@ function nursoft_auto_tagging_system( $post_id, $post, $update ) {
 
     // 7. Assign the tags back to the Software post (Appends tags without deleting existing custom user tags)
     wp_set_post_terms( $post_id, $final_tags, 'post_tag', true );
+}
 
 add_action( 'save_post', 'nursoft_auto_tagging_system', 10, 3 );
 
