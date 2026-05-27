@@ -4,7 +4,7 @@
  *
  * @author  Mohamed Nurdin Mgaza <codeoba@gmail.com>
  * @country Tanzania | +687001775
- * @version 1.7.0
+ * @version 1.8.0
  * @package Nursoft
  */
 ?>
@@ -103,7 +103,7 @@ if ( is_front_page() || is_home() ) {
             &copy; <?php echo date('Y'); ?> <strong style="color: var(--text-secondary);">NURSOFT</strong> &mdash;
             Designed &amp; Developed by <a href="mailto:codeoba@gmail.com" style="color: var(--accent-blue); text-decoration: none; font-weight: 600;">Mohamed Nurdin Mgaza</a>
             &mdash; Tanzania &middot;
-            <span style="color: var(--text-muted);">v1.7.0</span>
+            <span style="color: var(--text-muted);">v1.8.0</span>
         </p>
     </div>
 </div>

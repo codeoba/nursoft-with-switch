@@ -4,7 +4,7 @@
  *
  * @author  Mohamed Nurdin Mgaza <codeoba@gmail.com>
  * @country Tanzania | +687001775
- * @version 1.7.0
+ * @version 1.8.0
  * @package Nursoft
  */
 
@@ -70,9 +70,12 @@ get_header(); ?>
                         <?php endif; ?>
                     </div>
 
-                    <div class="soft_ident_info" style="margin-left: 20px;">
-                        <h1 class="soft_ident_title" style="font-size: 24px; line-height: 1.3; margin-bottom: 8px;">
-                            <?php the_title(); ?>
+                    <div class="soft_ident_info" style="margin-left: 20px; flex-grow: 1;">
+                        <h1 class="soft_ident_title" style="font-size: 24px; line-height: 1.3; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; gap: 15px; width: 100%;">
+                            <span><?php the_title(); ?></span>
+                            <button class="fav-toggle-btn" data-post-id="<?php the_ID(); ?>" data-version="<?php echo esc_attr($format); ?>" title="<?php esc_attr_e('Add to Bookmarks', 'nursoft'); ?>" style="flex-shrink:0;">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                            </button>
                         </h1>
                         
                         <div class="soft_ident_cat_list">
