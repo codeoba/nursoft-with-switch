@@ -210,6 +210,20 @@
                 <span>Categories</span>
             </a>
 
+            <!-- Standalone My Account Button -->
+            <div class="account-btn-wrap" style="position:relative; display:flex; align-items:center;">
+                <a class="menu_link" href="#" id="nursoft-account-btn" aria-label="My Account" style="position:relative;">
+                    <?php if ( function_exists('is_user_logged_in') && is_user_logged_in() ) :
+                        $acct_user = wp_get_current_user();
+                        ?>
+                        <span style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,var(--accent-blue),#00d2ff); display:inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; color:#fff;"><?php echo strtoupper( substr( $acct_user->display_name, 0, 1 ) ); ?></span>
+                    <?php else : ?>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                    <?php endif; ?>
+                    <span class="account-btn-label"><?php _e('Account', 'nursoft'); ?></span>
+                </a>
+            </div>
+
             <!-- In-App Notification Bell -->
             <div class="notification-bell-wrap" style="position: relative; display: flex; align-items: center;">
                 <a class="menu_link" href="#" id="nursoft-bell-btn" style="position: relative; padding: 10px;">
@@ -370,9 +384,6 @@ $categories = get_terms( array(
                     <span><?php _e('My Bookmarks', 'nursoft'); ?></span>
                     <span id="nav-bookmark-count" style="display:inline-flex; align-items:center; justify-content:center; background:var(--accent-magenta); color:#fff; font-size:10px; font-weight:700; padding:2px 6px; border-radius:10px; min-width:16px; height:16px; line-height:1;">0</span>
                 </button>
-                <button class="modal-tab-btn" id="modal-tab-account" style="background:none; border:none; color:var(--text-muted); font-size:16px; font-weight:700; cursor:pointer; padding:5px 0; transition: color var(--transition-fast); display:flex; align-items:center; gap:6px; position:relative;">
-                    <span><?php _e('My Account', 'nursoft'); ?></span>
-                </button>
             </div>
             <button class="categories-modal-close" id="categories-modal-close" aria-label="Close categories popup" style="background:none; border:none; color:var(--text-muted); font-size:24px; cursor:pointer; line-height:1; transition:color var(--transition-fast);">&times;</button>
         </div>
@@ -407,83 +418,63 @@ $categories = get_terms( array(
             </div>
         </div>
 
-        <!-- Account Tab Panel -->
-        <div class="modal-panel" id="modal-panel-account" style="display:none; flex-direction:column; gap:15px; max-height:400px; overflow-y:auto; padding-right:5px;">
-            <?php if ( is_user_logged_in() ) : 
-                $current_user = wp_get_current_user();
-                ?>
-                <div style="background:var(--bg-element); border:1px solid var(--border-color); border-radius:12px; padding:15px; display:flex; align-items:center; gap:15px;">
-                    <div style="width:50px; height:50px; border-radius:50%; background:var(--accent-blue); display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:700; color:#fff;">
-                        <?php echo strtoupper( substr( $current_user->display_name, 0, 1 ) ); ?>
-                    </div>
-                    <div style="flex-grow:1;">
-                        <h5 style="margin:0; font-size:15px; color:var(--text-primary);"><?php echo esc_html( $current_user->display_name ); ?></h5>
-                        <p style="margin:2px 0 0; font-size:12px; color:var(--text-muted);"><?php echo esc_html( $current_user->user_email ); ?></p>
-                    </div>
-                    <a href="<?php echo wp_logout_url( home_url() ); ?>" class="remove-fav-btn" style="color:var(--accent-magenta); font-size:12px; font-weight:600; text-decoration:none; display:flex; align-items:center; gap:4px;" title="Logout">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 0 1 2 2v2h-2V4H5v16h9v-2h2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9z"/></svg>
-                    </a>
-                </div>
-                
-                <!-- Notification Settings Option -->
-                <div style="background:var(--bg-element); border:1px solid var(--border-color); border-radius:12px; padding:15px; display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <h6 style="margin:0; font-size:13px; color:var(--text-primary);"><?php _e('Email Update Alerts', 'nursoft'); ?></h6>
-                        <p style="margin:2px 0 0; font-size:11px; color:var(--text-muted);"><?php _e('Get notified when your bookmarks get updated.', 'nursoft'); ?></p>
-                    </div>
-                    <label class="switch" style="position:relative; display:inline-block; width:40px; height:20px;">
-                        <input type="checkbox" checked style="opacity:0; width:0; height:0;">
-                        <span class="slider round" style="position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background-color:var(--border-color); border-radius:20px; transition:0.4s;" onclick="this.style.backgroundColor = this.style.backgroundColor==='var(--accent-blue)' ? 'var(--border-color)' : 'var(--accent-blue)'"></span>
-                    </label>
-                </div>
-            <?php else : ?>
-                <!-- Login/Register Form Panel -->
-                <div id="auth-forms-wrapper">
-                    <!-- Login Form -->
-                    <form id="nursoft-login-form" style="display:flex; flex-direction:column; gap:12px;">
-                        <h5 style="margin:0 0 5px; font-size:15px; color:var(--text-primary); text-align:center;"><?php _e('Sign In to Your Account', 'nursoft'); ?></h5>
-                        <div id="login-error-msg" style="display:none; color:var(--accent-magenta); font-size:12px; text-align:center; font-weight:600;"></div>
-                        <div>
-                            <label style="display:block; font-size:11px; color:var(--text-muted); margin-bottom:4px; font-weight:600;"><?php _e('Username', 'nursoft'); ?></label>
-                            <input type="text" name="username" class="auth-form-input" required placeholder="Enter username" />
-                        </div>
-                        <div>
-                            <label style="display:block; font-size:11px; color:var(--text-muted); margin-bottom:4px; font-weight:600;"><?php _e('Password', 'nursoft'); ?></label>
-                            <input type="password" name="password" class="auth-form-input" required placeholder="Enter password" />
-                        </div>
-                        <button type="submit" class="auth-submit-btn" style="margin-top:10px;"><?php _e('Sign In', 'nursoft'); ?></button>
-                        <p style="text-align:center; font-size:12px; color:var(--text-muted); margin: 8px 0 0;">
-                            <?php _e("Don't have an account?", 'nursoft'); ?>
-                            <a href="#" id="go-to-register" style="color:var(--accent-blue); font-weight:600; text-decoration:none;"><?php _e('Register now', 'nursoft'); ?></a>
-                        </p>
-                    </form>
-
-                    <!-- Registration Form -->
-                    <form id="nursoft-register-form" style="display:none; flex-direction:column; gap:12px;">
-                        <h5 style="margin:0 0 5px; font-size:15px; color:var(--text-primary); text-align:center;"><?php _e('Create a New Account', 'nursoft'); ?></h5>
-                        <div id="register-error-msg" style="display:none; color:var(--accent-magenta); font-size:12px; text-align:center; font-weight:600;"></div>
-                        <div>
-                            <label style="display:block; font-size:11px; color:var(--text-muted); margin-bottom:4px; font-weight:600;"><?php _e('Username', 'nursoft'); ?></label>
-                            <input type="text" name="username" class="auth-form-input" required placeholder="Choose a username" />
-                        </div>
-                        <div>
-                            <label style="display:block; font-size:11px; color:var(--text-muted); margin-bottom:4px; font-weight:600;"><?php _e('Email Address', 'nursoft'); ?></label>
-                            <input type="email" name="email" class="auth-form-input" required placeholder="Enter email" />
-                        </div>
-                        <div>
-                            <label style="display:block; font-size:11px; color:var(--text-muted); margin-bottom:4px; font-weight:600;"><?php _e('Password', 'nursoft'); ?></label>
-                            <input type="password" name="password" class="auth-form-input" required placeholder="Choose a strong password" />
-                        </div>
-                        <button type="submit" class="auth-submit-btn" style="margin-top:10px;"><?php _e('Register', 'nursoft'); ?></button>
-                        <p style="text-align:center; font-size:12px; color:var(--text-muted); margin: 8px 0 0;">
-                            <?php _e('Already have an account?', 'nursoft'); ?>
-                            <a href="#" id="go-to-login" style="color:var(--accent-blue); font-weight:600; text-decoration:none;"><?php _e('Sign in', 'nursoft'); ?></a>
-                        </p>
-                    </form>
-                </div>
-            <?php endif; ?>
-        </div>
     </div>
+</div>
+
+<!-- Standalone Account Dropdown (separate from categories modal) -->
+<div class="nursoft-account-dropdown" id="nursoft-account-dropdown" style="display:none; position:fixed; z-index:9999; background:var(--bg-surface); border:1px solid var(--border-color); border-radius:14px; box-shadow:0 15px 35px rgba(0,0,0,0.6); padding:20px; width:300px; flex-direction:column; gap:14px;">
+    <?php if ( function_exists('is_user_logged_in') && is_user_logged_in() ) :
+        $current_user = wp_get_current_user();
+        ?>
+        <div style="display:flex; align-items:center; gap:12px; padding-bottom:14px; border-bottom:1px solid var(--border-color);">
+            <div style="width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,var(--accent-blue),#00d2ff); display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:800; color:#fff; flex-shrink:0;">
+                <?php echo strtoupper( substr( $current_user->display_name, 0, 1 ) ); ?>
+            </div>
+            <div style="flex-grow:1; min-width:0;">
+                <h5 style="margin:0; font-size:14px; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><?php echo esc_html( $current_user->display_name ); ?></h5>
+                <p style="margin:2px 0 0; font-size:11px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><?php echo esc_html( $current_user->user_email ); ?></p>
+            </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+            <div style="background:var(--bg-element); border:1px solid var(--border-color); border-radius:10px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h6 style="margin:0; font-size:12px; color:var(--text-primary);"><?php _e('Email Update Alerts', 'nursoft'); ?></h6>
+                    <p style="margin:2px 0 0; font-size:10px; color:var(--text-muted);"><?php _e('Notify me when bookmarks update', 'nursoft'); ?></p>
+                </div>
+                <span style="width:36px; height:18px; background:var(--accent-blue); border-radius:10px; display:inline-block; cursor:pointer; flex-shrink:0;"></span>
+            </div>
+            <a href="<?php echo wp_logout_url( home_url() ); ?>" style="display:flex; align-items:center; gap:8px; padding:10px 12px; background:rgba(255,0,128,0.05); border:1px solid rgba(255,0,128,0.15); border-radius:10px; color:var(--accent-magenta); font-size:13px; font-weight:600; text-decoration:none; transition:background var(--transition-fast);" onmouseover="this.style.background='rgba(255,0,128,0.12)'" onmouseout="this.style.background='rgba(255,0,128,0.05)'">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 0 1 2 2v2h-2V4H5v16h9v-2h2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9z"/></svg>
+                <?php _e('Sign Out', 'nursoft'); ?>
+            </a>
+        </div>
+    <?php else : ?>
+        <h5 style="margin:0 0 4px; font-size:14px; color:var(--text-primary); text-align:center;"><?php _e('Welcome Back', 'nursoft'); ?></h5>
+        <p style="margin:0 0 12px; font-size:11px; color:var(--text-muted); text-align:center;"><?php _e('Sign in to save bookmarks & get updates', 'nursoft'); ?></p>
+        <!-- Login Form -->
+        <form id="nursoft-login-form" style="display:flex; flex-direction:column; gap:10px;">
+            <div id="login-error-msg" style="display:none; color:var(--accent-magenta); font-size:11px; text-align:center; font-weight:600;"></div>
+            <input type="text" name="username" class="auth-form-input" required placeholder="<?php esc_attr_e('Username', 'nursoft'); ?>" />
+            <input type="password" name="password" class="auth-form-input" required placeholder="<?php esc_attr_e('Password', 'nursoft'); ?>" />
+            <button type="submit" class="auth-submit-btn"><?php _e('Sign In', 'nursoft'); ?></button>
+            <p style="text-align:center; font-size:11px; color:var(--text-muted); margin:4px 0 0;">
+                <?php _e("No account?", 'nursoft'); ?>
+                <a href="#" id="go-to-register" style="color:var(--accent-blue); font-weight:600; text-decoration:none;"><?php _e('Register', 'nursoft'); ?></a>
+            </p>
+        </form>
+        <!-- Registration Form -->
+        <form id="nursoft-register-form" style="display:none; flex-direction:column; gap:10px;">
+            <div id="register-error-msg" style="display:none; color:var(--accent-magenta); font-size:11px; text-align:center; font-weight:600;"></div>
+            <input type="text" name="username" class="auth-form-input" required placeholder="<?php esc_attr_e('Username', 'nursoft'); ?>" />
+            <input type="email" name="email" class="auth-form-input" required placeholder="<?php esc_attr_e('Email address', 'nursoft'); ?>" />
+            <input type="password" name="password" class="auth-form-input" required placeholder="<?php esc_attr_e('Password', 'nursoft'); ?>" />
+            <button type="submit" class="auth-submit-btn"><?php _e('Create Account', 'nursoft'); ?></button>
+            <p style="text-align:center; font-size:11px; color:var(--text-muted); margin:4px 0 0;">
+                <?php _e('Have an account?', 'nursoft'); ?>
+                <a href="#" id="go-to-login" style="color:var(--accent-blue); font-weight:600; text-decoration:none;"><?php _e('Sign in', 'nursoft'); ?></a>
+            </p>
+        </form>
+    <?php endif; ?>
 </div>
 
 <!-- Scripts for Categories & Favorites Management -->
@@ -671,12 +662,41 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    if (tabAccount && panelAccount) {
-        tabAccount.addEventListener('click', function(e) {
+    // Standalone Account Dropdown
+    const accountBtn = document.getElementById('nursoft-account-btn');
+    const accountDropdown = document.getElementById('nursoft-account-dropdown');
+
+    if (accountBtn && accountDropdown) {
+        accountBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            resetAllTabs();
-            tabAccount.classList.add('active');
-            panelAccount.style.display = 'flex';
+            e.stopPropagation();
+            const isOpen = accountDropdown.style.display === 'flex';
+            // Close notification dropdown if open
+            const notifDrop = document.getElementById('notification-dropdown');
+            if (notifDrop) notifDrop.style.display = 'none';
+            if (isOpen) {
+                accountDropdown.style.display = 'none';
+            } else {
+                accountDropdown.style.display = 'flex';
+                // Smart positioning: anchor below the button
+                const rect = accountBtn.getBoundingClientRect();
+                const dropW = 300;
+                let left = rect.left;
+                if (left + dropW > window.innerWidth - 10) {
+                    left = window.innerWidth - dropW - 10;
+                }
+                if (left < 10) left = 10;
+                accountDropdown.style.top = (rect.bottom + 8) + 'px';
+                accountDropdown.style.left = left + 'px';
+                accountDropdown.style.right = 'auto';
+            }
+        });
+
+        // Close when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!accountDropdown.contains(e.target) && e.target !== accountBtn) {
+                accountDropdown.style.display = 'none';
+            }
         });
     }
 

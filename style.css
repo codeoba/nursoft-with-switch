@@ -1255,7 +1255,7 @@ html[data-theme="light"] .soft_section_title {
 @media (max-width: 768px) {
     .header_nav {
         display: grid;
-        grid-template-columns: 1fr auto 1fr;
+        grid-template-columns: 1fr auto auto auto;
         align-items: center;
         gap: 12px 0;
         width: 100%;
@@ -1268,18 +1268,35 @@ html[data-theme="light"] .soft_section_title {
         display: flex;
     }
     
-    /* Theme switcher strictly in the center of the top row */
+    /* Theme switcher in center */
     .theme_toggle_btn {
         grid-column: 2;
         grid-row: 1;
-        margin: 0 auto !important;
+        margin: 0 6px !important;
     }
 
-    /* Categories button strictly on the far right of the top row */
-    .menu_link#nursoft-categories-btn {
+    /* Account icon – second from right */
+    .account-btn-wrap {
         grid-column: 3;
         grid-row: 1;
-        margin-left: auto !important;
+        margin-right: 4px;
+    }
+
+    /* Account label text hidden on mobile */
+    .account-btn-label {
+        display: none;
+    }
+
+    /* Notification bell hidden on mobile (saves space) */
+    .notification-bell-wrap {
+        display: none;
+    }
+
+    /* Categories button far right of top row */
+    .menu_link#nursoft-categories-btn {
+        grid-column: 4;
+        grid-row: 1;
+        margin-left: 0 !important;
         margin-right: 0 !important;
         display: flex;
         justify-content: flex-end;
