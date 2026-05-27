@@ -2992,6 +2992,82 @@ html[data-theme="light"] .platform_sub_count {
     color: #ffffff;
 }
 
+/* ==========================================================================
+   19. PREMIUM ULTRAMODERN PAGINATION STYLES
+   ========================================================================== */
+.nursoft-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 40px auto;
+    padding: 10px 0;
+    font-family: var(--font-heading);
+}
+
+.nursoft-pagination a, 
+.nursoft-pagination span.current,
+.nursoft-pagination span.dots {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    height: 42px;
+    padding: 0 16px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all var(--transition-fast);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.nursoft-pagination a:hover {
+    background: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: var(--glow-blue);
+}
+
+.nursoft-pagination span.current {
+    background: linear-gradient(135deg, var(--accent-blue), #0055ff);
+    color: #ffffff;
+    border-color: var(--accent-blue);
+    box-shadow: var(--glow-blue);
+    transform: scale(1.05);
+}
+
+.nursoft-pagination span.dots {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    color: var(--text-muted);
+}
+
+/* Light mode overrides */
+html[data-theme="light"] .nursoft-pagination a {
+    background: #ffffff;
+    color: #4b5563;
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+}
+
+html[data-theme="light"] .nursoft-pagination a:hover {
+    background: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: #ffffff;
+}
+
+html[data-theme="light"] .nursoft-pagination span.current {
+    background: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: #ffffff;
+}
+
 
 
 

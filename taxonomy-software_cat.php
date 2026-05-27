@@ -138,37 +138,16 @@ $current_cat = get_queried_object();
             </div>
 
             <!-- Sleek Dark Mode Pagination -->
-            <div class="nursoft-pagination" style="display:flex; justify-content:center; gap:8px; margin-bottom: 40px;">
+            <div class="nursoft-pagination">
                 <?php
                 echo paginate_links( array(
                     'mid_size'  => 2,
-                    'prev_text' => '<span style="padding:8px 16px; background:var(--bg-surface); border:1px solid var(--border-color); border-radius:6px; color:var(--text-secondary);">&laquo; Previous</span>',
-                    'next_text' => '<span style="padding:8px 16px; background:var(--bg-surface); border:1px solid var(--border-color); border-radius:6px; color:var(--text-secondary);">Next &raquo;</span>',
+                    'prev_text' => '&laquo; Previous',
+                    'next_text' => 'Next &raquo;',
                     'type'      => 'plain',
                 ) );
                 ?>
             </div>
-            <style>
-                .nursoft-pagination a, .nursoft-pagination span.current {
-                    display: inline-block;
-                    padding: 8px 16px;
-                    background: var(--bg-surface);
-                    border: 1px solid var(--border-color);
-                    border-radius: 6px;
-                    color: var(--text-secondary);
-                    font-weight: 600;
-                    transition: background var(--transition-fast), color var(--transition-fast);
-                }
-                .nursoft-pagination a:hover {
-                    background: var(--bg-surface-hover);
-                    color: var(--text-primary);
-                }
-                .nursoft-pagination span.current {
-                    background: var(--accent-blue);
-                    color: white;
-                    border-color: var(--accent-blue);
-                }
-            </style>
 
         <?php else : ?>
             <p style="text-align: center; color: var(--text-secondary); margin: 60px 0;"><?php _e('No software found in this category.', 'nursoft'); ?></p>
