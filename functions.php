@@ -335,10 +335,23 @@ function nursoft_platform_archive_include_cpts( $query ) {
 }
 add_action( 'pre_get_posts', 'nursoft_platform_archive_include_cpts' );
 
-/**
- * Auto-initialize Platforms & E-Learning Categories
- */
 function nursoft_auto_init_platforms_and_categories() {
+    // 0. Clean up old legacy Book/Course terms if they exist in the 'software_cat' taxonomy
+    $legacy_terms_to_delete = array(
+        'books', 'courses', 'technology-programming', 'business-finance', 'science-mathematics', 
+        'self-help-development', 'novels-literature', 'biography-history', 'health-wellness', 
+        'art-graphic-design', 'kids-education', 'languages-reference',
+        'web-development', 'mobile-app-development', 'data-science-ai', 'graphic-design-ui-ux',
+        'digital-marketing', 'python-backend', 'photography-video', 'business-entrepreneur',
+        'language-learning', 'personal-finance'
+    );
+    foreach ( $legacy_terms_to_delete as $term_slug ) {
+        $term = get_term_by( 'slug', $term_slug, 'software_cat' );
+        if ( $term ) {
+            wp_delete_term( $term->term_id, 'software_cat' );
+        }
+    }
+
     // 2. Pre-populate Book Categories in 'book_cat'
     $book_subs = array(
         'technology-programming'  => 'Technology & Programming',
