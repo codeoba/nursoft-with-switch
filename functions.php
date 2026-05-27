@@ -134,7 +134,8 @@ function nursoft_register_software_cpt() {
     register_post_type( 'software', $software_args );
 
     // 2. Book CPT (New)
-    if ( get_theme_mod( 'nursoft_enable_books', '1' ) === '1' ) {
+    $enable_books = get_theme_mod( 'nursoft_enable_books', true );
+    if ( $enable_books && $enable_books !== '0' && $enable_books !== 'off' ) {
         $book_labels = array(
             'name'                  => _x( 'Books', 'Post Type General Name', 'nursoft' ),
             'singular_name'         => _x( 'Book Item', 'Post Type Singular Name', 'nursoft' ),
@@ -176,7 +177,8 @@ function nursoft_register_software_cpt() {
     }
 
     // 3. Course CPT (New)
-    if ( get_theme_mod( 'nursoft_enable_courses', '1' ) === '1' ) {
+    $enable_courses = get_theme_mod( 'nursoft_enable_courses', true );
+    if ( $enable_courses && $enable_courses !== '0' && $enable_courses !== 'off' ) {
         $course_labels = array(
             'name'                  => _x( 'Courses', 'Post Type General Name', 'nursoft' ),
             'singular_name'         => _x( 'Course Item', 'Post Type Singular Name', 'nursoft' ),
@@ -276,7 +278,8 @@ function nursoft_register_taxonomies() {
     register_taxonomy( 'software_cat', array( 'software' ), $cat_args );
 
     // 3. Book Category Taxonomy (Fiction, Non-Fiction, etc. - ONLY for book CPT)
-    if ( get_theme_mod( 'nursoft_enable_books', '1' ) === '1' ) {
+    $enable_books = get_theme_mod( 'nursoft_enable_books', true );
+    if ( $enable_books && $enable_books !== '0' && $enable_books !== 'off' ) {
         $book_cat_labels = array(
             'name'              => _x( 'Book Categories', 'taxonomy general name', 'nursoft' ),
             'singular_name'     => _x( 'Book Category', 'taxonomy singular name', 'nursoft' ),
@@ -304,7 +307,8 @@ function nursoft_register_taxonomies() {
     }
 
     // 4. Course Category Taxonomy (Web Dev, Design, etc. - ONLY for course CPT)
-    if ( get_theme_mod( 'nursoft_enable_courses', '1' ) === '1' ) {
+    $enable_courses = get_theme_mod( 'nursoft_enable_courses', true );
+    if ( $enable_courses && $enable_courses !== '0' && $enable_courses !== 'off' ) {
         $course_cat_labels = array(
             'name'              => _x( 'Course Categories', 'taxonomy general name', 'nursoft' ),
             'singular_name'     => _x( 'Course Category', 'taxonomy singular name', 'nursoft' ),
@@ -2188,7 +2192,7 @@ function nursoft_customize_register( $wp_customize ) {
 
     // Enable/Disable E-Books Module
     $wp_customize->add_setting( 'nursoft_enable_books', array(
-        'default'           => '1',
+        'default'           => true,
         'sanitize_callback' => 'nursoft_sanitize_checkbox',
     ) );
     $wp_customize->add_control( 'nursoft_enable_books', array(
@@ -2199,7 +2203,7 @@ function nursoft_customize_register( $wp_customize ) {
 
     // Enable/Disable Video Courses Module
     $wp_customize->add_setting( 'nursoft_enable_courses', array(
-        'default'           => '1',
+        'default'           => true,
         'sanitize_callback' => 'nursoft_sanitize_checkbox',
     ) );
     $wp_customize->add_control( 'nursoft_enable_courses', array(
@@ -2214,7 +2218,7 @@ add_action( 'customize_register', 'nursoft_customize_register' );
  * Sanitization helper for custom checkboxes
  */
 function nursoft_sanitize_checkbox( $checked ) {
-    return ( ( isset( $checked ) && true === $checked ) ? '1' : '0' );
+    return ( ( isset( $checked ) && ( true === $checked || '1' === $checked || 1 === $checked || 'on' === $checked ) ) ? true : false );
 }
 
 

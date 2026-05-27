@@ -100,7 +100,8 @@
             }
 
             // Append Books CPT dynamically if enabled in customizer
-            if ( get_theme_mod( 'nursoft_enable_books', '1' ) === '1' ) {
+            $enable_books = get_theme_mod( 'nursoft_enable_books', true );
+            if ( $enable_books && $enable_books !== '0' && $enable_books !== 'off' ) {
                 $menu_items[] = array(
                     'slug'   => 'books',
                     'name'   => __( 'Books', 'nursoft' ),
@@ -110,7 +111,8 @@
             }
 
             // Append Courses CPT dynamically if enabled in customizer
-            if ( get_theme_mod( 'nursoft_enable_courses', '1' ) === '1' ) {
+            $enable_courses = get_theme_mod( 'nursoft_enable_courses', true );
+            if ( $enable_courses && $enable_courses !== '0' && $enable_courses !== 'off' ) {
                 $menu_items[] = array(
                     'slug'   => 'courses',
                     'name'   => __( 'Courses', 'nursoft' ),
