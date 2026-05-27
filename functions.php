@@ -65,23 +65,23 @@ function nursoft_scripts() {
     wp_enqueue_style( 'nursoft-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap', array(), null );
 
     // Theme main stylesheet
-    wp_enqueue_style( 'nursoft-style', get_stylesheet_uri(), array( 'nursoft-fonts' ), '1.8.0' );
+    wp_enqueue_style( 'nursoft-style', get_stylesheet_uri(), array( 'nursoft-fonts' ), '1.9.0' );
 
     // Enqueue Live Search JS
-    wp_enqueue_script( 'nursoft-live-search', get_template_directory_uri() . '/assets/js/live-search.js', array(), '1.8.0', true );
+    wp_enqueue_script( 'nursoft-live-search', get_template_directory_uri() . '/assets/js/live-search.js', array(), '1.9.0', true );
     wp_localize_script( 'nursoft-live-search', 'nursoftLiveSearch', array(
         'ajaxurl' => admin_url( 'admin-ajax.php' ),
         'nonce'   => wp_create_nonce( 'nursoft-search-nonce' )
     ) );
 
     // Enqueue Download Handler JS
-    wp_enqueue_script( 'nursoft-download-handler', get_template_directory_uri() . '/assets/js/download-handler.js', array(), '1.8.0', true );
+    wp_enqueue_script( 'nursoft-download-handler', get_template_directory_uri() . '/assets/js/download-handler.js', array(), '1.9.0', true );
     wp_localize_script( 'nursoft-download-handler', 'nursoftDownload', array(
         'ajaxurl' => admin_url( 'admin-ajax.php' )
     ) );
 
     // Enqueue Quick View JS
-    wp_enqueue_script( 'nursoft-quick-view', get_template_directory_uri() . '/assets/js/quick-view.js', array(), '1.8.0', true );
+    wp_enqueue_script( 'nursoft-quick-view', get_template_directory_uri() . '/assets/js/quick-view.js', array(), '1.9.0', true );
     wp_localize_script( 'nursoft-quick-view', 'nursoftQuickView', array(
         'ajaxurl' => admin_url( 'admin-ajax.php' ),
         'nonce'   => wp_create_nonce( 'nursoft-quickview-nonce' )
@@ -2282,7 +2282,7 @@ add_filter( 'the_content', 'nursoft_inject_content_ads' );
  */
 function nursoft_dynamic_seo_engine() {
     // 1. Robots, Canonical & Core Meta tags
-    echo "\n<!-- Nursoft Premium SEO Engine (v1.8.0) -->\n";
+    echo "\n<!-- Nursoft Premium SEO Engine (v1.9.0) -->\n";
     
     $canonical_url = esc_url( home_url( $_SERVER['REQUEST_URI'] ) );
     echo '<link rel="canonical" href="' . $canonical_url . '" />' . "\n";
@@ -2627,6 +2627,126 @@ function nursoft_get_favorites_details_ajax() {
     
     wp_send_json_success( array( 'html' => $html ) );
 }
+
+
+/**
+ * AJAX Login Handler
+ */
+add_action( 'wp_ajax_nursoft_ajax_login', 'nursoft_ajax_login_handler' );
+add_action( 'wp_ajax_nopriv_nursoft_ajax_login', 'nursoft_ajax_login_handler' );
+
+function nursoft_ajax_login_handler() {
+    if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'nursoft-fav-nonce' ) ) {
+        wp_send_json_error( array( 'message' => 'Security check failed.' ) );
+    }
+
+    $info = array();
+    $info['user_login']    = sanitize_user( $_POST['username'] );
+    $info['user_password'] = $_POST['password'];
+    $info['remember']      = true;
+
+    $user_signon = wp_signon( $info, false );
+
+    if ( is_wp_error( $user_signon ) ) {
+        wp_send_json_error( array( 'message' => $user_signon->get_error_message() ) );
+    } else {
+        wp_send_json_success( array( 'message' => 'Logged in successfully! Reloading...' ) );
+    }
+}
+
+/**
+ * AJAX Registration Handler
+ */
+add_action( 'wp_ajax_nursoft_ajax_register', 'nursoft_ajax_register_handler' );
+add_action( 'wp_ajax_nopriv_nursoft_ajax_register', 'nursoft_ajax_register_handler' );
+
+function nursoft_ajax_register_handler() {
+    if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'nursoft-fav-nonce' ) ) {
+        wp_send_json_error( array( 'message' => 'Security check failed.' ) );
+    }
+
+    $username = sanitize_user( $_POST['username'] );
+    $email    = sanitize_email( $_POST['email'] );
+    $password = $_POST['password'];
+
+    if ( username_exists( $username ) ) {
+        wp_send_json_error( array( 'message' => 'Username already exists.' ) );
+    }
+    if ( email_exists( $email ) ) {
+        wp_send_json_error( array( 'message' => 'Email already registered.' ) );
+    }
+
+    $user_id = wp_create_user( $username, $password, $email );
+
+    if ( is_wp_error( $user_id ) ) {
+        wp_send_json_error( array( 'message' => $user_id->get_error_message() ) );
+    } else {
+        // Automatically sign the user in
+        $info = array();
+        $info['user_login']    = $username;
+        $info['user_password'] = $password;
+        $info['remember']      = true;
+        wp_signon( $info, false );
+
+        wp_send_json_success( array( 'message' => 'Registered successfully! Reloading...' ) );
+    }
+}
+
+/**
+ * AJAX Notification Feed Handler
+ */
+add_action( 'wp_ajax_nursoft_get_recent_notifications', 'nursoft_get_recent_notifications_handler' );
+add_action( 'wp_ajax_nopriv_nursoft_get_recent_notifications', 'nursoft_get_recent_notifications_handler' );
+
+function nursoft_get_recent_notifications_handler() {
+    if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'nursoft-fav-nonce' ) ) {
+        wp_send_json_error( array( 'message' => 'Security check failed.' ) );
+    }
+
+    $args = array(
+        'post_type'      => array( 'software', 'book', 'course' ),
+        'posts_per_page' => 5,
+        'orderby'        => 'modified',
+        'order'          => 'DESC'
+    );
+
+    $query = new WP_Query( $args );
+    $html = '';
+
+    if ( $query->have_posts() ) {
+        while ( $query->have_posts() ) {
+            $query->the_post();
+            $post_id    = get_the_ID();
+            $post_type  = get_post_type();
+            $modified   = get_the_modified_date('U');
+            $created    = get_the_date('U');
+
+            // Determine if new or updated
+            $is_update = ($modified - $created > 86400); // Modified more than 24 hours after creation
+            $badge = $is_update ? '<span style="background:rgba(255, 0, 128, 0.1);color:var(--accent-magenta);font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;border:1px solid rgba(255, 0, 128, 0.2);">Updated</span>' : '<span style="background:rgba(43, 203, 186, 0.1);color:#2bcbba;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;border:1px solid rgba(43, 203, 186, 0.2);">New</span>';
+
+            $thumb = has_post_thumbnail() ? get_the_post_thumbnail_url( $post_id, 'thumbnail' ) : get_template_directory_uri() . '/assets/img/default-logo.png';
+            $time_diff = human_time_diff( get_the_modified_date('U'), current_time('timestamp') ) . ' ago';
+
+            $html .= '<div class="notification-item" style="display:flex;align-items:center;gap:12px;padding:10px;border-bottom:1px solid var(--border-color);transition:background var(--transition-fast);" onmouseover="this.style.background=\'var(--bg-surface-hover)\'" onmouseout="this.style.background=\'none\'">';
+            $html .= '  <img src="' . esc_url( $thumb ) . '" style="width:36px;height:36px;object-fit:cover;border-radius:6px;border:1px solid var(--border-color);" />';
+            $html .= '  <div style="flex-grow:1;min-width:0;">';
+            $html .= '    <a href="' . esc_url( get_permalink() ) . '" style="font-weight:600;font-size:12.5px;color:var(--text-primary);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none;">' . esc_html( get_the_title() ) . '</a>';
+            $html .= '    <div style="display:flex;align-items:center;gap:8px;margin-top:2px;">';
+            $html .= '      ' . $badge;
+            $html .= '      <span style="font-size:10px;color:var(--text-muted);">' . esc_html( $time_diff ) . '</span>';
+            $html .= '    </div>';
+            $html .= '  </div>';
+            $html .= '</div>';
+        }
+        wp_reset_postdata();
+    } else {
+        $html = '<p style="text-align:center;color:var(--text-muted);padding:15px;font-size:12px;">No new notifications.</p>';
+    }
+
+    wp_send_json_success( array( 'html' => $html ) );
+}
+
 
 
 

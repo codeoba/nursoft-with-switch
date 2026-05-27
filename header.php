@@ -4,7 +4,7 @@
  *
  * @author  Mohamed Nurdin Mgaza <codeoba@gmail.com>
  * @country Tanzania | +687001775
- * @version 1.8.0
+ * @version 1.9.0
  * @package Nursoft
  */
 ?>
@@ -94,6 +94,58 @@
             50% { transform: scale(1.25); }
             100% { transform: scale(1); }
         }
+
+        /* Notifications, Search & Account Styling */
+        @keyframes bell-pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .search_wrap.shortcut-focus {
+            box-shadow: 0 0 15px var(--accent-blue);
+            border-color: var(--accent-blue) !important;
+            transform: scale(1.02);
+        }
+        .search-shortcut-badge {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 8px;
+            display: inline-flex;
+            align-items: center;
+        }
+        .auth-form-input {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--bg-body);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 13px;
+            transition: border-color var(--transition-fast);
+        }
+        .auth-form-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+        .auth-submit-btn {
+            background: linear-gradient(135deg, var(--accent-blue), #00d2ff);
+            color: #fff;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            padding: 11px;
+            cursor: pointer;
+            width: 100%;
+            transition: opacity var(--transition-fast);
+        }
+        .auth-submit-btn:hover {
+            opacity: 0.9;
+        }
     </style>
     <script>
         (function() {
@@ -139,10 +191,10 @@
             </a>
 
             <!-- Search Form Container with Live Results -->
-            <div class="search_wrap">
+            <div class="search_wrap" id="search-wrap-container">
                 <form role="search" method="get" class="header_search_form" action="<?php echo esc_url( home_url( '/' ) ); ?>">
                     <input type="hidden" name="post_type" value="software" />
-                    <input type="text" class="search_input" id="search-input-field" placeholder="<?php esc_attr_e( 'Search software here...', 'nursoft' ); ?>" value="<?php echo get_search_query(); ?>" name="s" autocomplete="off" />
+                    <input type="text" class="search_input" id="search-input-field" placeholder="<?php esc_attr_e( 'Search here... (Press \'/\')', 'nursoft' ); ?>" value="<?php echo get_search_query(); ?>" name="s" autocomplete="off" />
                     <button class="search_submit" type="submit" aria-label="Search button">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 461.516 461.516">
                             <path d="M185.746 371.332a185.3 185.3 0 0 0 113.866-39.11L422.39 455c9.172 8.858 23.787 8.604 32.645-.568 8.641-8.947 8.641-23.131 0-32.077L332.257 299.577c62.899-80.968 48.252-197.595-32.716-260.494S101.947-9.169 39.048 71.799-9.204 269.394 71.764 332.293a185.64 185.64 0 0 0 113.982 39.039M87.095 87.059c54.484-54.485 142.82-54.486 197.305-.002s54.486 142.82.002 197.305-142.82 54.486-197.305.002l-.002-.002c-54.484-54.087-54.805-142.101-.718-196.585z"></path>
@@ -157,6 +209,27 @@
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M29 11v14a4 4 0 0 1-4 4H11a4 4 0 0 1-4-4V11a4 4 0 0 1 4-4h14a4 4 0 0 1 4 4m24-4H39a4 4 0 0 0-4 4v14a4 4 0 0 0 4 4h14a4 4 0 0 0 4-4V11a4 4 0 0 0-4-4M25 35H11a4 4 0 0 0-4 4v14a4 4 0 0 0 4 4h14a4 4 0 0 0 4-4V39a4 4 0 0 0-4-4m21 0a11 11 0 1 0 11 11 11 11 0 0 0-11-11"></path></svg>
                 <span>Categories</span>
             </a>
+
+            <!-- In-App Notification Bell -->
+            <div class="notification-bell-wrap" style="position: relative; display: flex; align-items: center;">
+                <a class="menu_link" href="#" id="nursoft-bell-btn" style="position: relative; padding: 10px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                        <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 4.36 6 6.92 6 10v5l-2 2v1h16v-1l-2-2z"/>
+                    </svg>
+                    <span id="bell-dot" style="display:none; position: absolute; top: 4px; right: 4px; width: 8px; height: 8px; background: var(--accent-magenta); border-radius: 50%; box-shadow: 0 0 8px var(--accent-magenta); animation: bell-pulse 1.5s infinite;"></span>
+                </a>
+                
+                <!-- Floating Notification Dropdown Panel -->
+                <div class="notification-dropdown" id="notification-dropdown" style="display:none; position: absolute; top: 45px; right: 0; width: 300px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 999; overflow: hidden; flex-direction: column;">
+                    <div style="padding: 12px; border-bottom: 1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-weight: 700; font-size: 13px; color: var(--text-primary);"><?php _e('Recent Updates', 'nursoft'); ?></span>
+                        <button id="clear-bell-btn" style="background:none; border:none; color:var(--text-muted); font-size:11px; cursor:pointer; font-weight:600;"><?php _e('Clear', 'nursoft'); ?></button>
+                    </div>
+                    <div id="notifications-feed-container" style="max-height: 250px; overflow-y: auto;">
+                        <!-- Dynamic notification items -->
+                    </div>
+                </div>
+            </div>
 
             <!-- Theme Toggle Switcher -->
             <button class="theme_toggle_btn" id="nursoft-theme-toggle-btn" aria-label="<?php esc_attr_e( 'Toggle Light/Dark Theme', 'nursoft' ); ?>">
@@ -297,6 +370,9 @@ $categories = get_terms( array(
                     <span><?php _e('My Bookmarks', 'nursoft'); ?></span>
                     <span id="nav-bookmark-count" style="display:inline-flex; align-items:center; justify-content:center; background:var(--accent-magenta); color:#fff; font-size:10px; font-weight:700; padding:2px 6px; border-radius:10px; min-width:16px; height:16px; line-height:1;">0</span>
                 </button>
+                <button class="modal-tab-btn" id="modal-tab-account" style="background:none; border:none; color:var(--text-muted); font-size:16px; font-weight:700; cursor:pointer; padding:5px 0; transition: color var(--transition-fast); display:flex; align-items:center; gap:6px; position:relative;">
+                    <span><?php _e('My Account', 'nursoft'); ?></span>
+                </button>
             </div>
             <button class="categories-modal-close" id="categories-modal-close" aria-label="Close categories popup" style="background:none; border:none; color:var(--text-muted); font-size:24px; cursor:pointer; line-height:1; transition:color var(--transition-fast);">&times;</button>
         </div>
@@ -329,6 +405,83 @@ $categories = get_terms( array(
             <div id="favorites-list-container" style="max-height:400px; overflow-y:auto; padding-right:5px;">
                 <!-- Loaded dynamically by JS -->
             </div>
+        </div>
+
+        <!-- Account Tab Panel -->
+        <div class="modal-panel" id="modal-panel-account" style="display:none; flex-direction:column; gap:15px; max-height:400px; overflow-y:auto; padding-right:5px;">
+            <?php if ( is_user_logged_in() ) : 
+                $current_user = wp_get_current_user();
+                ?>
+                <div style="background:var(--bg-element); border:1px solid var(--border-color); border-radius:12px; padding:15px; display:flex; align-items:center; gap:15px;">
+                    <div style="width:50px; height:50px; border-radius:50%; background:var(--accent-blue); display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:700; color:#fff;">
+                        <?php echo strtoupper( substr( $current_user->display_name, 0, 1 ) ); ?>
+                    </div>
+                    <div style="flex-grow:1;">
+                        <h5 style="margin:0; font-size:15px; color:var(--text-primary);"><?php echo esc_html( $current_user->display_name ); ?></h5>
+                        <p style="margin:2px 0 0; font-size:12px; color:var(--text-muted);"><?php echo esc_html( $current_user->user_email ); ?></p>
+                    </div>
+                    <a href="<?php echo wp_logout_url( home_url() ); ?>" class="remove-fav-btn" style="color:var(--accent-magenta); font-size:12px; font-weight:600; text-decoration:none; display:flex; align-items:center; gap:4px;" title="Logout">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 0 1 2 2v2h-2V4H5v16h9v-2h2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9z"/></svg>
+                    </a>
+                </div>
+                
+                <!-- Notification Settings Option -->
+                <div style="background:var(--bg-element); border:1px solid var(--border-color); border-radius:12px; padding:15px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <h6 style="margin:0; font-size:13px; color:var(--text-primary);"><?php _e('Email Update Alerts', 'nursoft'); ?></h6>
+                        <p style="margin:2px 0 0; font-size:11px; color:var(--text-muted);"><?php _e('Get notified when your bookmarks get updated.', 'nursoft'); ?></p>
+                    </div>
+                    <label class="switch" style="position:relative; display:inline-block; width:40px; height:20px;">
+                        <input type="checkbox" checked style="opacity:0; width:0; height:0;">
+                        <span class="slider round" style="position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background-color:var(--border-color); border-radius:20px; transition:0.4s;" onclick="this.style.backgroundColor = this.style.backgroundColor==='var(--accent-blue)' ? 'var(--border-color)' : 'var(--accent-blue)'"></span>
+                    </label>
+                </div>
+            <?php else : ?>
+                <!-- Login/Register Form Panel -->
+                <div id="auth-forms-wrapper">
+                    <!-- Login Form -->
+                    <form id="nursoft-login-form" style="display:flex; flex-direction:column; gap:12px;">
+                        <h5 style="margin:0 0 5px; font-size:15px; color:var(--text-primary); text-align:center;"><?php _e('Sign In to Your Account', 'nursoft'); ?></h5>
+                        <div id="login-error-msg" style="display:none; color:var(--accent-magenta); font-size:12px; text-align:center; font-weight:600;"></div>
+                        <div>
+                            <label style="display:block; font-size:11px; color:var(--text-muted); margin-bottom:4px; font-weight:600;"><?php _e('Username', 'nursoft'); ?></label>
+                            <input type="text" name="username" class="auth-form-input" required placeholder="Enter username" />
+                        </div>
+                        <div>
+                            <label style="display:block; font-size:11px; color:var(--text-muted); margin-bottom:4px; font-weight:600;"><?php _e('Password', 'nursoft'); ?></label>
+                            <input type="password" name="password" class="auth-form-input" required placeholder="Enter password" />
+                        </div>
+                        <button type="submit" class="auth-submit-btn" style="margin-top:10px;"><?php _e('Sign In', 'nursoft'); ?></button>
+                        <p style="text-align:center; font-size:12px; color:var(--text-muted); margin: 8px 0 0;">
+                            <?php _e("Don't have an account?", 'nursoft'); ?>
+                            <a href="#" id="go-to-register" style="color:var(--accent-blue); font-weight:600; text-decoration:none;"><?php _e('Register now', 'nursoft'); ?></a>
+                        </p>
+                    </form>
+
+                    <!-- Registration Form -->
+                    <form id="nursoft-register-form" style="display:none; flex-direction:column; gap:12px;">
+                        <h5 style="margin:0 0 5px; font-size:15px; color:var(--text-primary); text-align:center;"><?php _e('Create a New Account', 'nursoft'); ?></h5>
+                        <div id="register-error-msg" style="display:none; color:var(--accent-magenta); font-size:12px; text-align:center; font-weight:600;"></div>
+                        <div>
+                            <label style="display:block; font-size:11px; color:var(--text-muted); margin-bottom:4px; font-weight:600;"><?php _e('Username', 'nursoft'); ?></label>
+                            <input type="text" name="username" class="auth-form-input" required placeholder="Choose a username" />
+                        </div>
+                        <div>
+                            <label style="display:block; font-size:11px; color:var(--text-muted); margin-bottom:4px; font-weight:600;"><?php _e('Email Address', 'nursoft'); ?></label>
+                            <input type="email" name="email" class="auth-form-input" required placeholder="Enter email" />
+                        </div>
+                        <div>
+                            <label style="display:block; font-size:11px; color:var(--text-muted); margin-bottom:4px; font-weight:600;"><?php _e('Password', 'nursoft'); ?></label>
+                            <input type="password" name="password" class="auth-form-input" required placeholder="Choose a strong password" />
+                        </div>
+                        <button type="submit" class="auth-submit-btn" style="margin-top:10px;"><?php _e('Register', 'nursoft'); ?></button>
+                        <p style="text-align:center; font-size:12px; color:var(--text-muted); margin: 8px 0 0;">
+                            <?php _e('Already have an account?', 'nursoft'); ?>
+                            <a href="#" id="go-to-login" style="color:var(--accent-blue); font-weight:600; text-decoration:none;"><?php _e('Sign in', 'nursoft'); ?></a>
+                        </p>
+                    </form>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>
@@ -491,22 +644,123 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Modal Tabs Toggling
-    if (tabCategories && tabBookmarks && panelCategories && panelBookmarks) {
+    const tabAccount = document.getElementById('modal-tab-account');
+    const panelAccount = document.getElementById('modal-panel-account');
+
+    function resetAllTabs() {
+        [tabCategories, tabBookmarks, tabAccount].forEach(t => { if (t) t.classList.remove('active'); });
+        [panelCategories, panelBookmarks, panelAccount].forEach(p => { if (p) p.style.display = 'none'; });
+    }
+
+    if (tabCategories) {
         tabCategories.addEventListener('click', function(e) {
             e.preventDefault();
+            resetAllTabs();
             tabCategories.classList.add('active');
-            tabBookmarks.classList.remove('active');
             panelCategories.style.display = 'block';
-            panelBookmarks.style.display = 'none';
         });
+    }
 
+    if (tabBookmarks) {
         tabBookmarks.addEventListener('click', function(e) {
             e.preventDefault();
+            resetAllTabs();
             tabBookmarks.classList.add('active');
-            tabCategories.classList.remove('active');
             panelBookmarks.style.display = 'flex';
-            panelCategories.style.display = 'none';
             loadFavoritesList();
+        });
+    }
+
+    if (tabAccount && panelAccount) {
+        tabAccount.addEventListener('click', function(e) {
+            e.preventDefault();
+            resetAllTabs();
+            tabAccount.classList.add('active');
+            panelAccount.style.display = 'flex';
+        });
+    }
+
+    // Login Form AJAX
+    const loginForm = document.getElementById('nursoft-login-form');
+    const registerForm = document.getElementById('nursoft-register-form');
+    const goToRegister = document.getElementById('go-to-register');
+    const goToLogin = document.getElementById('go-to-login');
+
+    if (goToRegister) {
+        goToRegister.addEventListener('click', function(e) {
+            e.preventDefault();
+            loginForm.style.display = 'none';
+            registerForm.style.display = 'flex';
+        });
+    }
+    if (goToLogin) {
+        goToLogin.addEventListener('click', function(e) {
+            e.preventDefault();
+            registerForm.style.display = 'none';
+            loginForm.style.display = 'flex';
+        });
+    }
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const errDiv = document.getElementById('login-error-msg');
+            const btn = loginForm.querySelector('.auth-submit-btn');
+            btn.textContent = 'Signing in...';
+            btn.disabled = true;
+
+            const fd = new FormData();
+            fd.append('action', 'nursoft_ajax_login');
+            fd.append('nonce', window.nursoft_ajax.nonce);
+            fd.append('username', loginForm.querySelector('[name="username"]').value);
+            fd.append('password', loginForm.querySelector('[name="password"]').value);
+
+            fetch(window.nursoft_ajax.url, { method: 'POST', body: fd })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    btn.textContent = '✓ Success! Reloading...';
+                    btn.style.background = 'linear-gradient(135deg, #2bcbba, #00d2a0)';
+                    setTimeout(() => location.reload(), 1200);
+                } else {
+                    errDiv.textContent = data.data ? data.data.message : 'Login failed.';
+                    errDiv.style.display = 'block';
+                    btn.textContent = 'Sign In';
+                    btn.disabled = false;
+                }
+            });
+        });
+    }
+
+    if (registerForm) {
+        registerForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const errDiv = document.getElementById('register-error-msg');
+            const btn = registerForm.querySelector('.auth-submit-btn');
+            btn.textContent = 'Registering...';
+            btn.disabled = true;
+
+            const fd = new FormData();
+            fd.append('action', 'nursoft_ajax_register');
+            fd.append('nonce', window.nursoft_ajax.nonce);
+            fd.append('username', registerForm.querySelector('[name="username"]').value);
+            fd.append('email', registerForm.querySelector('[name="email"]').value);
+            fd.append('password', registerForm.querySelector('[name="password"]').value);
+
+            fetch(window.nursoft_ajax.url, { method: 'POST', body: fd })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    btn.textContent = '✓ Welcome! Reloading...';
+                    btn.style.background = 'linear-gradient(135deg, #2bcbba, #00d2a0)';
+                    setTimeout(() => location.reload(), 1200);
+                } else {
+                    errDiv.textContent = data.data ? data.data.message : 'Registration failed.';
+                    errDiv.style.display = 'block';
+                    btn.textContent = 'Register';
+                    btn.disabled = false;
+                }
+            });
         });
     }
 
@@ -535,6 +789,93 @@ document.addEventListener('DOMContentLoaded', function() {
             if (e.key === 'Escape' && categoriesModal.classList.contains('open')) {
                 closeModal();
             }
+        });
+    }
+
+    // Notifications Bell logic
+    const bellBtn = document.getElementById('nursoft-bell-btn');
+    const bellDropdown = document.getElementById('notification-dropdown');
+    const bellDot = document.getElementById('bell-dot');
+    const notificationsFeed = document.getElementById('notifications-feed-container');
+    const clearBellBtn = document.getElementById('clear-bell-btn');
+
+    function checkNewNotifications() {
+        if (!bellDot) return;
+        const now = Date.now();
+        const fd = new FormData();
+        fd.append('action', 'nursoft_get_recent_notifications');
+        fd.append('nonce', window.nursoft_ajax.nonce);
+
+        fetch(window.nursoft_ajax.url, {
+            method: 'POST',
+            body: fd
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success && data.data && data.data.html) {
+                if (notificationsFeed) {
+                    notificationsFeed.innerHTML = data.data.html;
+                }
+                const lastModifiedText = localStorage.getItem('nursoft_last_modified_stamp') || '0';
+                if (lastModifiedText === '0' || parseInt(lastModifiedText) < (now - 172800000)) {
+                    bellDot.style.display = 'block';
+                }
+            }
+        });
+    }
+    checkNewNotifications();
+
+    if (bellBtn && bellDropdown) {
+        bellBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const isVisible = bellDropdown.style.display === 'flex';
+            bellDropdown.style.display = isVisible ? 'none' : 'flex';
+            if (!isVisible) {
+                if (bellDot) bellDot.style.display = 'none';
+                localStorage.setItem('nursoft_last_modified_stamp', Date.now().toString());
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (bellDropdown && !bellDropdown.contains(e.target) && e.target !== bellBtn) {
+                bellDropdown.style.display = 'none';
+            }
+        });
+    }
+
+    if (clearBellBtn && bellDot) {
+        clearBellBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            bellDot.style.display = 'none';
+            localStorage.setItem('nursoft_last_modified_stamp', Date.now().toString());
+            if (notificationsFeed) {
+                notificationsFeed.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:15px;font-size:12px;">No new notifications.</p>';
+            }
+        });
+    }
+
+    // Live Search Shortcut Key logic
+    document.addEventListener('keydown', function(e) {
+        if (e.key === '/' && document.activeElement !== document.getElementById('search-input-field')) {
+            e.preventDefault();
+            const searchInput = document.getElementById('search-input-field');
+            const searchWrap = document.getElementById('search-wrap-container');
+            if (searchInput) {
+                searchInput.focus();
+                searchInput.select();
+                if (searchWrap) {
+                    searchWrap.classList.add('shortcut-focus');
+                }
+            }
+        }
+    });
+
+    const searchInputField = document.getElementById('search-input-field');
+    const searchWrapContainer = document.getElementById('search-wrap-container');
+    if (searchInputField && searchWrapContainer) {
+        searchInputField.addEventListener('blur', function() {
+            searchWrapContainer.classList.remove('shortcut-focus');
         });
     }
 
