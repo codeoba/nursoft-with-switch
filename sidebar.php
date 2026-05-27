@@ -9,6 +9,14 @@
  */
 ?>
 <aside class="software_sidebar_col main_sidebar">
+    <?php
+    $sidebar_post_type = 'software';
+    if ( is_singular( 'book' ) || is_tax( 'book_cat' ) || is_post_type_archive( 'book' ) ) {
+        $sidebar_post_type = 'book';
+    } elseif ( is_singular( 'course' ) || is_tax( 'course_cat' ) || is_post_type_archive( 'course' ) ) {
+        $sidebar_post_type = 'course';
+    }
+    ?>
     
     <!-- 1. Default Fallback Widget: Dynamic Tabs (Latest, Popular, Comments) -->
     <div class="widget_box tabbed_sidebar_widget">
@@ -36,7 +44,7 @@
                 <div class="widget_list">
                     <?php
                     $latest_args = array(
-                        'post_type'      => 'software',
+                        'post_type'      => $sidebar_post_type,
                         'posts_per_page' => 4,
                         'orderby'        => 'modified',
                         'order'          => 'DESC',
@@ -44,10 +52,17 @@
                     $latest_query = new WP_Query( $latest_args );
                     if ( $latest_query->have_posts() ) :
                         while ( $latest_query->have_posts() ) : $latest_query->the_post();
-                            $rel_version   = get_post_meta( get_the_ID(), '_nursoft_version', true );
-                            $rel_size      = get_post_meta( get_the_ID(), '_nursoft_size', true );
-                            $rel_plats     = wp_get_post_terms( get_the_ID(), 'platform' );
-                            $rel_plat_name = ! empty( $rel_plats ) && ! is_wp_error( $rel_plats ) ? $rel_plats[0]->name : 'Windows';
+                            $rel_version = '';
+                            if ( get_post_type() === 'book' ) {
+                                $author = get_post_meta( get_the_ID(), '_nursoft_book_author', true );
+                                if ( $author ) $rel_version = 'by ' . esc_html($author);
+                            } elseif ( get_post_type() === 'course' ) {
+                                $instructor = get_post_meta( get_the_ID(), '_nursoft_course_instructor', true );
+                                if ( $instructor ) $rel_version = 'by ' . esc_html($instructor);
+                            } else {
+                                $ver = get_post_meta( get_the_ID(), '_nursoft_version', true );
+                                if ( $ver ) $rel_version = esc_html($ver);
+                            }
                             $mod_time      = human_time_diff( get_the_modified_time('U'), current_time('timestamp') ) . ' ' . __('ago', 'nursoft');
                             ?>
                             <div class="widget_item">
@@ -60,7 +75,7 @@
                                 </a>
                                 <div class="widget_item_info">
                                     <a class="widget_item_title" href="<?php the_permalink(); ?>">
-                                        <?php the_title(); ?><?php if($rel_version) echo ' ' . esc_html($rel_version); ?>
+                                        <?php the_title(); ?><?php if($rel_version) echo ' • ' . $rel_version; ?>
                                     </a>
                                     <div class="widget_item_meta">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
@@ -83,7 +98,7 @@
                 <div class="widget_list">
                     <?php
                     $pop_args = array(
-                        'post_type'      => 'software',
+                        'post_type'      => $sidebar_post_type,
                         'posts_per_page' => 4,
                         'meta_key'       => '_nursoft_downloads',
                         'orderby'        => 'meta_value_num',
@@ -92,7 +107,17 @@
                     $pop_query = new WP_Query( $pop_args );
                     if ( $pop_query->have_posts() ) :
                         while ( $pop_query->have_posts() ) : $pop_query->the_post();
-                            $pop_version   = get_post_meta( get_the_ID(), '_nursoft_version', true );
+                            $pop_version = '';
+                            if ( get_post_type() === 'book' ) {
+                                $author = get_post_meta( get_the_ID(), '_nursoft_book_author', true );
+                                if ( $author ) $pop_version = 'by ' . esc_html($author);
+                            } elseif ( get_post_type() === 'course' ) {
+                                $instructor = get_post_meta( get_the_ID(), '_nursoft_course_instructor', true );
+                                if ( $instructor ) $pop_version = 'by ' . esc_html($instructor);
+                            } else {
+                                $ver = get_post_meta( get_the_ID(), '_nursoft_version', true );
+                                if ( $ver ) $pop_version = esc_html($ver);
+                            }
                             $pop_downloads = get_post_meta( get_the_ID(), '_nursoft_downloads', true );
                             $pop_downloads_formatted = $pop_downloads !== '' ? number_format( intval($pop_downloads) ) : '0';
                             ?>
@@ -106,7 +131,7 @@
                                 </a>
                                 <div class="widget_item_info">
                                     <a class="widget_item_title" href="<?php the_permalink(); ?>">
-                                        <?php the_title(); ?><?php if($pop_version) echo ' ' . esc_html($pop_version); ?>
+                                        <?php the_title(); ?><?php if($pop_version) echo ' • ' . $pop_version; ?>
                                     </a>
                                     <div class="widget_item_meta" style="color: var(--accent-yellow);">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
@@ -131,7 +156,7 @@
                     $comments_args = array(
                         'number'      => 4,
                         'status'      => 'approve',
-                        'post_type'   => 'software',
+                        'post_type'   => $sidebar_post_type,
                     );
                     $comments = get_comments( $comments_args );
                     if ( ! empty( $comments ) ) :
