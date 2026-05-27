@@ -1,0 +1,8 @@
+# WordPress Theme Git Ignore
+.DS_Store
+Thumbs.db
+*.log
+*.zip
+*.tar.gz
+node_modules/
+.git/
