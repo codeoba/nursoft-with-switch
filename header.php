@@ -4,7 +4,7 @@
  *
  * @author  Mohamed Nurdin Mgaza <codeoba@gmail.com>
  * @country Tanzania | +687001775
- * @version 1.8.0
+ * @version 1.7.0
  * @package Nursoft
  */
 ?>
@@ -15,105 +15,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="profile" href="https://gmpg.org/xfn/11">
     <?php wp_head(); ?>
-    <style>
-        /* Premium custom styles */
-        .modal-tab-btn {
-            position: relative;
-        }
-        .modal-tab-btn.active {
-            color: var(--accent-blue) !important;
-        }
-        .modal-tab-btn.active::after {
-            content: '';
-            position: absolute;
-            bottom: -6px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: var(--accent-blue);
-            box-shadow: var(--glow-blue);
-        }
-        .fav-item-card {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 12px;
-            background: var(--bg-element);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            margin-bottom: 10px;
-            position: relative;
-            transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
-        }
-        .fav-item-card:hover {
-            transform: translateY(-2px);
-            border-color: var(--accent-blue);
-            box-shadow: var(--glow-blue);
-        }
-        .remove-fav-btn {
-            background: none;
-            border: none;
-            color: var(--accent-magenta);
-            cursor: pointer;
-            padding: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform var(--transition-fast);
-        }
-        .remove-fav-btn:hover {
-            transform: scale(1.15);
-        }
-        .fav-toggle-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
-            color: var(--text-muted);
-            border-radius: 50%;
-            width: 42px;
-            height: 42px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-        .fav-toggle-btn:hover {
-            transform: scale(1.1);
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--accent-magenta);
-            border-color: var(--accent-magenta);
-        }
-        .fav-toggle-btn.favorited {
-            color: var(--accent-magenta);
-            background: rgba(255, 0, 128, 0.1);
-            border-color: var(--accent-magenta);
-            animation: pulse-heart 0.4s ease-out;
-        }
-        @keyframes pulse-heart {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.25); }
-            100% { transform: scale(1); }
-        }
-    </style>
     <script>
         (function() {
             const savedTheme = localStorage.getItem('nursoft-theme') || 'dark';
             document.documentElement.setAttribute('data-theme', savedTheme);
         })();
-        
-        window.nursoft_ajax = {
-            url: '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>',
-            nonce: '<?php echo esc_create_nonce( 'nursoft-fav-nonce' ); ?>',
-            isLoggedIn: <?php echo is_user_logged_in() ? 'true' : 'false'; ?>,
-            userFavorites: <?php 
-                if ( is_user_logged_in() ) {
-                    $favs = get_user_meta( get_current_user_id(), '_nursoft_favorites', true );
-                    echo json_encode( is_array( $favs ) ? array_map( 'intval', $favs ) : array() );
-                } else {
-                    echo '[]';
-                }
-            ?>
-        };
     </script>
 </head>
 <body <?php body_class(); ?>>
@@ -288,53 +194,31 @@ $categories = get_terms( array(
 <div class="nursoft-categories-modal" id="nursoft-categories-modal">
     <div class="categories-modal-overlay" id="categories-modal-overlay"></div>
     <div class="categories-modal-content">
-        <div class="categories-modal-header" style="flex-direction: column; align-items: stretch; gap: 15px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
-                <h4 style="margin:0; display:flex; align-items:center; gap:8px;">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width: 20px; height: 20px; color: var(--accent-blue);"><path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"/></svg>
-                    <span id="modal-title-text"><?php _e('Explore Platform', 'nursoft'); ?></span>
-                </h4>
-                <button class="categories-modal-close" id="categories-modal-close" aria-label="Close categories popup" style="background:none; border:none; color:var(--text-secondary); font-size:24px; cursor:pointer;">&times;</button>
-            </div>
-            
-            <!-- Tabs Navigation -->
-            <div class="modal-tabs-nav" style="display: flex; gap: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;">
-                <button class="modal-tab-btn active" data-tab="categories" style="background: none; border: none; padding: 8px 16px; color: var(--text-primary); font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; position: relative; transition: color var(--transition-fast);">
-                    <?php _e('Browse Categories', 'nursoft'); ?>
-                </button>
-                <button class="modal-tab-btn" data-tab="bookmarks" style="background: none; border: none; padding: 8px 16px; color: var(--text-muted); font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; position: relative; transition: color var(--transition-fast);">
-                    <?php _e('My Bookmarks', 'nursoft'); ?>
-                    <span class="bookmark-count-badge" id="bookmark-count-badge" style="background: var(--accent-blue); color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-left: 5px; display: none;">0</span>
-                </button>
-            </div>
+        <div class="categories-modal-header">
+            <h4>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width: 20px; height: 20px; color: var(--accent-blue);"><path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"/></svg>
+                <span><?php _e('Software Categories', 'nursoft'); ?></span>
+            </h4>
+            <button class="categories-modal-close" id="categories-modal-close" aria-label="Close categories popup">&times;</button>
         </div>
-
-        <div class="modal-tab-content active" id="tab-content-categories">
-            <div class="categories-grid">
-                <?php if ( ! empty( $categories ) && ! is_wp_error( $categories ) ) : ?>
-                    <?php foreach ( $categories as $cat ) : 
-                        $count = $cat->count;
-                        ?>
-                        <a href="<?php echo esc_url( get_term_link( $cat ) ); ?>" class="category-grid-card">
-                            <div class="cat-card-info">
-                                <span class="cat-card-name"><?php echo esc_html( $cat->name ); ?></span>
-                                <span class="cat-card-count"><?php echo sprintf( _n( '%s App', '%s Apps', $count, 'nursoft' ), number_format( $count ) ); ?></span>
-                            </div>
-                            <div class="cat-card-arrow">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
-                            </div>
-                        </a>
-                    <?php endforeach; ?>
-                <?php else : ?>
-                    <p style="grid-column: 1 / -1; text-align: center; color: var(--text-secondary);"><?php _e('No categories found.', 'nursoft'); ?></p>
-                <?php endif; ?>
-            </div>
-        </div>
-
-        <div class="modal-tab-content" id="tab-content-bookmarks" style="display:none; flex-direction:column; gap:15px; max-height:400px; overflow-y:auto; padding:15px 5px;">
-            <div class="bookmarks-list-container" id="bookmarks-list-container">
-                <!-- Loaded dynamically via AJAX -->
-            </div>
+        <div class="categories-grid">
+            <?php if ( ! empty( $categories ) && ! is_wp_error( $categories ) ) : ?>
+                <?php foreach ( $categories as $cat ) : 
+                    $count = $cat->count;
+                    ?>
+                    <a href="<?php echo esc_url( get_term_link( $cat ) ); ?>" class="category-grid-card">
+                        <div class="cat-card-info">
+                            <span class="cat-card-name"><?php echo esc_html( $cat->name ); ?></span>
+                            <span class="cat-card-count"><?php echo sprintf( _n( '%s App', '%s Apps', $count, 'nursoft' ), number_format( $count ) ); ?></span>
+                        </div>
+                        <div class="cat-card-arrow">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
+            <?php else : ?>
+                <p style="grid-column: 1 / -1; text-align: center; color: var(--text-secondary);"><?php _e('No categories found.', 'nursoft'); ?></p>
+            <?php endif; ?>
         </div>
     </div>
 </div>
@@ -346,199 +230,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const categoriesModal = document.getElementById('nursoft-categories-modal');
     const categoriesOverlay = document.getElementById('categories-modal-overlay');
     const categoriesClose = document.getElementById('categories-modal-close');
-    
-    // Bookmark Keys
-    const favKey = 'nursoft_favorites_list';
-    const verKey = 'nursoft_favorites_versions';
-
-    function getLocalFavs() {
-        try {
-            return JSON.parse(localStorage.getItem(favKey)) || [];
-        } catch(e) {
-            return [];
-        }
-    }
-
-    function setLocalFavs(arr) {
-        localStorage.setItem(favKey, JSON.stringify(arr));
-        updateHeaderBadge();
-    }
-
-    function getSavedVersions() {
-        try {
-            return JSON.parse(localStorage.getItem(verKey)) || {};
-        } catch(e) {
-            return {};
-        }
-    }
-
-    function saveVersion(postId, version) {
-        const vers = getSavedVersions();
-        vers[postId] = version;
-        localStorage.setItem(verKey, JSON.stringify(vers));
-    }
-
-    function getFavorites() {
-        if (window.nursoft_ajax.isLoggedIn) {
-            return window.nursoft_ajax.userFavorites;
-        }
-        return getLocalFavs();
-    }
-
-    // Update the bookmarks badge count in the tabs header
-    function updateHeaderBadge() {
-        const favs = getFavorites();
-        const badge = document.getElementById('bookmark-count-badge');
-        if (badge) {
-            if (favs.length > 0) {
-                badge.textContent = favs.length;
-                badge.style.display = 'inline-block';
-            } else {
-                badge.style.display = 'none';
-            }
-        }
-    }
-
-    // Sync guest favorites from localStorage to database on login
-    if (window.nursoft_ajax.isLoggedIn && getLocalFavs().length > 0) {
-        const localFavs = getLocalFavs();
-        const mergedFavs = Array.from(new Set([...window.nursoft_ajax.userFavorites, ...localFavs]));
-        window.nursoft_ajax.userFavorites = mergedFavs;
-        
-        // Sync to server
-        jQuery.ajax({
-            url: window.nursoft_ajax.url,
-            type: 'POST',
-            data: {
-                action: 'nursoft_sync_favorites',
-                nonce: window.nursoft_ajax.nonce,
-                favorites: mergedFavs
-            },
-            success: function() {
-                localStorage.removeItem(favKey); // Clear guest favorites after sync
-                updateHeaderBadge();
-            }
-        });
-    }
-
-    // Sitewide single-item favorite toggle logic
-    jQuery(document).on('click', '.fav-toggle-btn', function(e) {
-        e.preventDefault();
-        const btn = this;
-        const postId = parseInt(btn.getAttribute('data-post-id'));
-        const currentVersion = btn.getAttribute('data-version') || '';
-        
-        let favs = getFavorites();
-        const isFav = favs.includes(postId);
-        
-        if (isFav) {
-            // Remove
-            btn.classList.remove('favorited');
-            if (window.nursoft_ajax.isLoggedIn) {
-                window.nursoft_ajax.userFavorites = window.nursoft_ajax.userFavorites.filter(id => id !== postId);
-                updateHeaderBadge();
-                jQuery.ajax({
-                    url: window.nursoft_ajax.url,
-                    type: 'POST',
-                    data: {
-                        action: 'nursoft_sync_favorites',
-                        nonce: window.nursoft_ajax.nonce,
-                        favorites: window.nursoft_ajax.userFavorites
-                    }
-                });
-            } else {
-                const local = getLocalFavs().filter(id => id !== postId);
-                setLocalFavs(local);
-            }
-        } else {
-            // Add
-            btn.classList.add('favorited');
-            if (currentVersion) {
-                saveVersion(postId, currentVersion);
-            }
-            if (window.nursoft_ajax.isLoggedIn) {
-                window.nursoft_ajax.userFavorites.push(postId);
-                updateHeaderBadge();
-                jQuery.ajax({
-                    url: window.nursoft_ajax.url,
-                    type: 'POST',
-                    data: {
-                        action: 'nursoft_sync_favorites',
-                        nonce: window.nursoft_ajax.nonce,
-                        favorites: window.nursoft_ajax.userFavorites
-                    }
-                });
-            } else {
-                const local = getLocalFavs();
-                local.push(postId);
-                setLocalFavs(local);
-            }
-        }
-    });
-
-    // Initialize single-item heart toggle states on load
-    function initSingleFavButton() {
-        const singleBtn = document.querySelector('.fav-toggle-btn');
-        if (singleBtn) {
-            const postId = parseInt(singleBtn.getAttribute('data-post-id'));
-            const favs = getFavorites();
-            if (favs.includes(postId)) {
-                singleBtn.classList.add('favorited');
-            }
-            // Auto update page specific saved version if favorited
-            const currentVersion = singleBtn.getAttribute('data-version');
-            if (favs.includes(postId) && currentVersion) {
-                saveVersion(postId, currentVersion);
-            }
-        }
-    }
-    initSingleFavButton();
-
-    // Populate bookmarks via AJAX
-    function loadBookmarksList() {
-        const container = document.getElementById('bookmarks-list-container');
-        if (!container) return;
-
-        const favs = getFavorites();
-        container.innerHTML = '<div style="text-align:center;padding:30px;"><div style="display:inline-block;width:30px;height:30px;border:3px solid rgba(255,255,255,0.1);border-radius:50%;border-top-color:var(--accent-blue);animation:spin 1s linear infinite;"></div></div>';
-        
-        jQuery.ajax({
-            url: window.nursoft_ajax.url,
-            type: 'POST',
-            data: {
-                action: 'nursoft_get_favorites_details',
-                nonce: window.nursoft_ajax.nonce,
-                post_ids: favs
-            },
-            success: function(response) {
-                if (response.success) {
-                    container.innerHTML = response.data.html;
-                    
-                    // Render update notifications if any version mismatch is detected
-                    const cards = container.querySelectorAll('.fav-item-card');
-                    const savedVersions = getSavedVersions();
-                    
-                    cards.forEach(card => {
-                        const postId = card.getAttribute('data-post-id');
-                        const latestVersion = card.getAttribute('data-latest-version');
-                        
-                        if (latestVersion && savedVersions[postId] && savedVersions[postId] !== latestVersion) {
-                            const badgeWrap = card.querySelector('.update-badge-container');
-                            if (badgeWrap) {
-                                badgeWrap.style.display = 'block';
-                                badgeWrap.innerHTML = `<span style="background: var(--accent-magenta); color:#fff; font-size:9px; padding:3px 8px; border-radius:12px; font-weight:800; animation: pulse-heart 1.5s infinite; box-shadow: 0 0 10px rgba(255, 0, 128, 0.4); white-space:nowrap;">UPDATE!</span>`;
-                            }
-                        }
-                    });
-                } else {
-                    container.innerHTML = `<p style="text-align:center;color:var(--text-secondary);">${response.data.message || 'Error loading bookmarks'}</p>`;
-                }
-            },
-            error: function() {
-                container.innerHTML = '<p style="text-align:center;color:var(--text-secondary);">Error loading bookmarks</p>';
-            }
-        });
-    }
 
     if (categoriesBtn && categoriesModal) {
         categoriesBtn.addEventListener('click', function(e) {
@@ -549,13 +240,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 categoriesModal.classList.add('open');
             }, 10);
             document.body.style.overflow = 'hidden'; // Disable background scrolling
-            updateHeaderBadge();
-            
-            // If bookmarks tab is active, reload list
-            const activeTab = document.querySelector('.modal-tab-btn.active');
-            if (activeTab && activeTab.getAttribute('data-tab') === 'bookmarks') {
-                loadBookmarksList();
-            }
         });
 
         function closeModal() {
@@ -582,77 +266,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Modal Tabs logic
-    const tabBtns = document.querySelectorAll('.modal-tab-btn');
-    tabBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            tabBtns.forEach(b => {
-                b.classList.remove('active');
-                b.style.color = 'var(--text-muted)';
-            });
-            this.classList.add('active');
-            this.style.color = 'var(--text-primary)';
-            
-            const targetTab = this.getAttribute('data-tab');
-            const categoriesContent = document.getElementById('tab-content-categories');
-            const bookmarksContent = document.getElementById('tab-content-bookmarks');
-            
-            if (targetTab === 'categories') {
-                categoriesContent.style.display = 'block';
-                bookmarksContent.style.display = 'none';
-            } else {
-                categoriesContent.style.display = 'none';
-                bookmarksContent.style.display = 'flex';
-                loadBookmarksList();
-            }
-        });
-    });
-
-    // Remove favorite logic inside bookmarks tab
-    jQuery(document).on('click', '.remove-fav-btn', function(e) {
-        e.preventDefault();
-        const postId = parseInt(this.getAttribute('data-post-id'));
-        
-        if (window.nursoft_ajax.isLoggedIn) {
-            window.nursoft_ajax.userFavorites = window.nursoft_ajax.userFavorites.filter(id => id !== postId);
-            updateHeaderBadge();
-            // Sync to server
-            jQuery.ajax({
-                url: window.nursoft_ajax.url,
-                type: 'POST',
-                data: {
-                    action: 'nursoft_sync_favorites',
-                    nonce: window.nursoft_ajax.nonce,
-                    favorites: window.nursoft_ajax.userFavorites
-                }
-            });
-        } else {
-            const local = getLocalFavs().filter(id => id !== postId);
-            setLocalFavs(local);
-        }
-        
-        // Remove item from UI with animation
-        const card = this.closest('.fav-item-card');
-        if (card) {
-            card.style.transform = 'scale(0.9)';
-            card.style.opacity = '0';
-            setTimeout(() => {
-                card.remove();
-                // If no bookmarks left, render fallback
-                const container = document.getElementById('bookmarks-list-container');
-                if (container && container.querySelectorAll('.fav-item-card').length === 0) {
-                    container.innerHTML = '<p class="no-bookmarks" style="text-align:center;color:var(--text-muted);padding:20px;font-weight:600;">No bookmarks saved yet.</p>';
-                }
-            }, 300);
-        }
-        
-        // Update single heart toggle state if present on the page
-        const singleBtn = document.querySelector('.fav-toggle-btn');
-        if (singleBtn && parseInt(singleBtn.getAttribute('data-post-id')) === postId) {
-            singleBtn.classList.remove('favorited');
-        }
-    });
-
     // Premium Theme Toggle Button logic
     const themeBtn = document.getElementById('nursoft-theme-toggle-btn');
     if (themeBtn) {
@@ -667,9 +280,6 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('nursoft-theme', newTheme);
         });
     }
-
-    // Call header badge init
-    updateHeaderBadge();
 });
 </script>
 
